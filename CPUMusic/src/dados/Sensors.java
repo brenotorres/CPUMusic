@@ -1,10 +1,94 @@
 package dados;
+import java.io.*;
+import java.util.*;
+import java.text.*;
+import java.lang.*;
+
+import org.hyperic.sigar.Cpu;
+import org.hyperic.sigar.Mem;
+import org.hyperic.sigar.Sigar;
+import org.hyperic.sigar.SigarException;
+import org.hyperic.sigar.CpuPerc;
+import org.hyperic.sigar.Sigar;
+import org.hyperic.sigar.SigarLoader;
+import org.hyperic.sigar.SigarException;
+
 
 public class Sensors {
 
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
+	private static Sigar sigar = new Sigar();
+
+	public void getInformationsAboutMemory() {
+		/*System.out.println("**************************************");
+	        System.out.println("*** Informations about the Memory: ***");
+	        System.out.println("**************************************\n");
+		 */
+
+		Mem mem = null;
+		try {
+			mem = sigar.getMem();
+		} catch (SigarException se) {
+			se.printStackTrace();
+		}
+		/*
+	        System.out.println("Actual total free system memory: "
+	                + mem.getActualFree() / 1024 / 1024+ " MB");
+	        System.out.println("Actual total used system memory: "
+	                + mem.getActualUsed() / 1024 / 1024 + " MB");
+	        System.out.println("Total free system memory ......: " + mem.getFree()
+	                / 1024 / 1024+ " MB");
+	        System.out.println("System Random Access Memory....: " + mem.getRam()
+	                + " MB");
+	        System.out.println("Total system memory............: " + mem.getTotal()
+	                / 1024 / 1024+ " MB");
+	        System.out.println("Total used system memory.......: " + mem.getUsed()
+	                / 1024 / 1024+ " MB");
+		 */
+
+		System.out.println(mem.getUsedPercent());
+
+
+
 
 	}
 
-}
+	public void getInformationsAboutCPU() {
+
+		/*System.out.println("**************************************");
+	        System.out.println("*** Informations about the CPU: ***");
+	        System.out.println("**************************************\n");
+		 */
+
+		try {
+			//Se deixar o metodo getcpuperc ele divide o uso da CPU em varios tipos
+			//como, usuario, sistema e tal, o que eu fiz foi pegar a que está em idle
+			//e subtrair de 100% pra pegar todo o resto, conferir se isso ta certo depois.
+			
+			System.out.println((1 - sigar.getCpuPerc().getIdle())*100);
+			
+		} catch (SigarException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void getInformationsAboutDISK() {
+
+		// pegar infomação sobre disco é um pouco mais dificil do que eu imaginava.
+		
+		/*try {
+			
+			//System.out.println(sigar.getDiskUsage());
+			
+		} catch (SigarException e) {
+			e.printStackTrace();
+		}*/
+	}
+
+
+
+
+	}
+
+
+
+
