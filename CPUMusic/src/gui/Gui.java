@@ -328,17 +328,23 @@ public class Gui extends Application {
 		final Image ifone = new Image(getClass().getResourceAsStream("fone.png"));
 		final Image istop = new Image(getClass().getResourceAsStream("stop.png"));
 		final Image imute = new Image(getClass().getResourceAsStream("mute.png"));
+		final Image iantes = new Image(getClass().getResourceAsStream("anterior.png"));
+		final Image iproximo = new Image(getClass().getResourceAsStream("proximo.png"));
 
 		final Button botPlay = new Button(); 	
 		final Button botPause = new Button();
 		final Button botStop = new Button();
 		final Button botMute = new Button();
+		final Button botAnt = new Button();
+		final Button botPro = new Button();
 
 		botPlay.setGraphic(new ImageView(iplay));
 		botPlay.setContentDisplay(ContentDisplay.CENTER);
 		botPause.setGraphic(new ImageView(ipause));
 		botStop.setGraphic(new ImageView(istop));
 		botMute.setGraphic(new ImageView(ifone));
+		botAnt.setGraphic(new ImageView(iantes));
+		botPro.setGraphic(new ImageView(iproximo));
 
 		botPlay.setStyle("-fx-base: transparent; ");//deixar transparente
 		botPlay.setFocusTraversable(false);//tirar borda
@@ -346,46 +352,25 @@ public class Gui extends Application {
 		botStop.setFocusTraversable(false);
 		botMute.setStyle("-fx-base: transparent;");
 		botMute.setFocusTraversable(false);
+		botPro.setStyle("-fx-base: transparent;");
+		botPro.setFocusTraversable(false);
+		botAnt.setStyle("-fx-base: transparent;");
+		botAnt.setFocusTraversable(false);
+
 
 		volume.valueProperty().addListener(new ChangeListener<Number>() {
 			public void changed(ObservableValue<? extends Number> ov, Number old_v, Number new_v){
 				player.set_volume(new_v.doubleValue());
-				if(new_v.doubleValue()==0.0){	
-					botMute.setGraphic(new ImageView(imute));
-				}else{
-					botMute.setGraphic(new ImageView(ifone));
-				}
 			}
 		});
 
-
+		
 		botPlay.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent evento) {
 				if(state != PLAYING){
-					if(!teste){
-						player.stop();
-						teste = true;
-					}
-					state = PLAYING;
-					Mp3 o = ((Mp3)table.getSelectionModel().getSelectedItem());
-					f = new File(o.getPath());
-
-					Media m = new Media(f.toURI().toString());
-					player.play(m);
-					player.play(m);
-					player.pause();
-					player.play(m);
-					vectorMp3.get(vectorMp3.indexOf(o)).incremeta();
-					reproducao.setValue(0.0);
+					play();
 					botPlay.setGraphic(new ImageView(ipause));
-
-					player.mp.currentTimeProperty().addListener(new InvalidationListener() {
-						public void invalidated(Observable ov) {
-							updateValues();
-						}
-					});
-
 				}else{
 					state = PAUSED;
 					player.pause();
@@ -394,8 +379,6 @@ public class Gui extends Application {
 
 			}
 		});
-
-
 
 		botStop.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
@@ -406,8 +389,8 @@ public class Gui extends Application {
 					botPlay.setGraphic(new ImageView(iplay));
 					state = STOPPED;
 				}
-			}});
-
+			}
+		});
 
 		botMute.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
@@ -421,15 +404,41 @@ public class Gui extends Application {
 					}else{
 						mute = true;
 						player.mute(mute);
-						volume.setValue(player.get_minimo());
+						//volume.setValue(player.get_minimo());
 						botMute.setGraphic( new ImageView(imute) );
 					}
 				}	
 			}
 		});
 
+		botPro.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent evento){
+				//if(state == PLAYING){
+				player.stop();
+				int x = table.getSelectionModel().getSelectedIndex();
+				table.getSelectionModel().clearAndSelect(x+1);
+				play();
+				botPlay.setGraphic(new ImageView(ipause));
+				//}
+			}
+		});
+
+		botAnt.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent evento){
+				//if(state == PLAYING){
+				player.stop();
+				int x = table.getSelectionModel().getSelectedIndex();
+				table.getSelectionModel().clearAndSelect(x-1);
+				play();
+				botPlay.setGraphic(new ImageView(ipause));
+				//}
+			}
+		});
+
 		hbox.setSpacing(11);
-		hbox.getChildren().addAll(botPlay, botStop, botMute, volume);
+		hbox.getChildren().addAll(botAnt, botPlay, botPro, botStop, botMute, volume);
 		return hbox;
 	}
 
@@ -451,6 +460,41 @@ public class Gui extends Application {
 				}
 			});
 		}
+	}
+
+	private void play(){
+		if(!teste){
+			player.stop();
+			teste = true;
+		}
+		state = PLAYING;
+		Mp3 o = ((Mp3)table.getSelectionModel().getSelectedItem());
+		f = new File(o.getPath());
+
+		Media m = new Media(f.toURI().toString());
+		player.play(m);
+		vectorMp3.get(vectorMp3.indexOf(o)).incremeta();
+		reproducao.setValue(0.0);
+
+		player.mp.currentTimeProperty().addListener(new InvalidationListener() {
+			public void invalidated(Observable ov) {
+				updateValues();
+			}
+		});
+
+		player.mp.setOnEndOfMedia(new Runnable() {
+			public void run() {
+				int atual = table.getSelectionModel().getSelectedIndex();
+				table.getSelectionModel().selectLast();
+				int ultimo = table.getSelectionModel().getSelectedIndex();
+				if (atual < ultimo){
+					table.getSelectionModel().select(atual+1);
+					player.stop();
+					play();
+				}
+			}
+		});
+
 	}
 
 	private static String formatTime(Duration elapsed, Duration duration) {
@@ -493,9 +537,9 @@ public class Gui extends Application {
 	private Node Config(){
 		VBox vbox = new VBox();
 		//vbox.setSpacing(10);
-		
+
 		Label Diretorio = new Label("Diretorio de musicas");
-		
+
 		final TextField txtDiretorio = new TextField(diretorio);
 		txtDiretorio.setTooltip(new Tooltip("Diretorio de onde as músicas serão tocadas"));
 		final Label configurado = new Label("\nConfigurado com sucesso!");
@@ -508,7 +552,7 @@ public class Gui extends Application {
 			@Override
 			public void handle(ActionEvent evento){
 				System.out.println(txtDiretorio.getText());
-				
+
 				diretorio = txtDiretorio.getText();
 				RepositorioMusica a = new RepositorioMusica(diretorio);
 
@@ -524,13 +568,13 @@ public class Gui extends Application {
 						i++;
 					}
 				}
-				
+
 				configurado.setVisible(true);
 			}
 		});
-		
+
 		vbox.getChildren().addAll(Diretorio, txtDiretorio, config, configurado);
-		
+
 		return vbox;
 	}
 
@@ -785,26 +829,8 @@ public class Gui extends Application {
 			@Override
 			public void handle(ActionEvent evento) {
 				if(state != PLAYING){
-					if(teste){
-						player.stop();
-						teste = false;
-					}
-					state = PLAYING;
-					Mp3 o = ((Mp3)playlist.getSelectionModel().getSelectedItem());
-					f = new File(o.getPath());
-					
-					Media m = new Media(f.toURI().toString());
-					player.play(m);
-					player.pause();
-					player.play(m);
-					vectorMp3.get(vectorMp3.indexOf(o)).incremeta();
-					reproducao.setValue(0.0);
+					playp();
 					botPlay.setGraphic(new ImageView(ipause));
-					player.mp.currentTimeProperty().addListener(new InvalidationListener() {
-						public void invalidated(Observable ov) {
-							updateValuesp();
-						}
-					});
 				}else{
 					state = PAUSED;
 					player.pause();
@@ -825,6 +851,25 @@ public class Gui extends Application {
 			}
 		});
 
+		botMute.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle (ActionEvent evento){
+				if(state == PLAYING||state == PAUSED){	
+					if(mute){
+						mute = false;
+						volumep.setValue(player.get_volumeAtual());
+						player.mute(mute);
+						botMute.setGraphic( new ImageView(ifone) );
+					}else{
+						mute = true;
+						player.mute(mute);
+						//volumep.setValue(player.get_minimo());
+						botMute.setGraphic( new ImageView(imute) );
+					}
+				}	
+			}
+		});
+
 		botPro.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent evento){
@@ -832,20 +877,8 @@ public class Gui extends Application {
 				player.stop();
 				int x = playlist.getSelectionModel().getSelectedIndex();
 				playlist.getSelectionModel().clearAndSelect(x+1);
-				Mp3 o = (Mp3) playlist.getSelectionModel().getSelectedItem();
-				f = new File(o.getPath());
-				Media m = new Media(f.toURI().toString());
-				player.play(m);
-				player.pause();
-				player.play(m);
-				vectorMp3.get(vectorMp3.indexOf(o)).incremeta();
-				reproducao.setValue(0.0);
+				playp();
 				botPlay.setGraphic(new ImageView(ipause));
-				player.mp.currentTimeProperty().addListener(new InvalidationListener() {
-					public void invalidated(Observable ov) {
-						updateValuesp();
-					}
-				});
 				//}
 			}
 		});
@@ -857,20 +890,8 @@ public class Gui extends Application {
 				player.stop();
 				int x = playlist.getSelectionModel().getSelectedIndex();
 				playlist.getSelectionModel().clearAndSelect(x-1);
-				Mp3 o = (Mp3) playlist.getSelectionModel().getSelectedItem();
-				f = new File(o.getPath());
-				Media m = new Media(f.toURI().toString());
-				player.play(m);
-				player.pause();
-				player.play(m);
-				vectorMp3.get(vectorMp3.indexOf(o)).incremeta();
-				reproducao.setValue(0.0);
+				playp();
 				botPlay.setGraphic(new ImageView(ipause));
-				player.mp.currentTimeProperty().addListener(new InvalidationListener() {
-					public void invalidated(Observable ov) {
-						updateValuesp();
-					}
-				});
 				//}
 			}
 		});
@@ -925,11 +946,6 @@ public class Gui extends Application {
 		volumep.valueProperty().addListener(new ChangeListener<Number>() {
 			public void changed(ObservableValue<? extends Number> ov, Number old_v, Number new_v){
 				player.set_volume(new_v.doubleValue());
-				if(new_v.doubleValue()==0.0){	
-					botMute.setGraphic(new ImageView(imute));
-				}else{
-					botMute.setGraphic(new ImageView(ifone));
-				}
 			}
 		});
 
@@ -946,7 +962,7 @@ public class Gui extends Application {
 
 	}
 
-	public void updateValuesp() {
+	private void updateValuesp() {
 		if (playTimep != null && reproducaop != null && volumep != null) {
 			Platform.runLater(new Runnable() {
 				@SuppressWarnings("deprecation")
@@ -962,5 +978,40 @@ public class Gui extends Application {
 				}
 			});
 		}
+	}
+
+	private void playp(){
+		if(teste){
+			player.stop();
+			teste = false;
+		}
+		state = PLAYING;
+		Mp3 o = ((Mp3)playlist.getSelectionModel().getSelectedItem());
+		f = new File(o.getPath());
+
+		Media m = new Media(f.toURI().toString());
+		player.play(m);
+		vectorMp3.get(vectorMp3.indexOf(o)).incremeta();
+		reproducaop.setValue(0.0);
+
+		player.mp.currentTimeProperty().addListener(new InvalidationListener() {
+			public void invalidated(Observable ov) {
+				updateValuesp();
+			}
+		});
+
+		player.mp.setOnEndOfMedia(new Runnable() {
+			public void run() {
+				int atual = playlist.getSelectionModel().getSelectedIndex();
+				playlist.getSelectionModel().selectLast();
+				int ultimo = playlist.getSelectionModel().getSelectedIndex();
+				if (atual < ultimo){
+					playlist.getSelectionModel().select(atual+1);
+					player.stop();
+					playp();
+				}
+			}
+		});
+
 	}
 }
