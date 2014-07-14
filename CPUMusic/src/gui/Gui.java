@@ -502,26 +502,51 @@ public class Gui extends Application {
 		configurado.setTextFill(Color.web("#0076a3"));
 		configurado.setVisible(false);
 
-		vbox.getChildren().addAll(Diretorio, txtDiretorio, configurado);
+		Button config = new Button("Configurar");
+		config.setVisible(true);
+		config.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent evento){
+				System.out.println(txtDiretorio.getText());
+				
+				diretorio = txtDiretorio.getText();
+				RepositorioMusica a = new RepositorioMusica(diretorio);
 
+				vectorMp3 = a.gerarLista();
+
+				datagenero();
+				dataArtista();
+
+				if(!vectorMp3.isEmpty()){
+					int i = 0;
+					while(i<vectorMp3.size()){
+						data.add(vectorMp3.get(i));
+						i++;
+					}
+				}
+				
+				configurado.setVisible(true);
+			}
+		});
+		
+		vbox.getChildren().addAll(Diretorio, txtDiretorio, config, configurado);
+		
 		return vbox;
 	}
 
 	public void datagenero(){
-		String[] g = new String[125];
-		boolean achou = false, nullo = false;
+		String[] g = new String[193];
+		boolean achou = false;
 		int index = 0;
 		for (int i = 0; i < vectorMp3.size(); i++) {
-			for (int j = 0; j < 125 && !achou && !nullo; j++ ) {
+			for (int j = 0; j < index && !achou; j++ ) {
 				if(g[j]!=null){
-					if( g[j].equals(vectorMp3.get(i).getGenero())){
+					if(g[j].equals(vectorMp3.get(i).getGenero())){
 						achou = true;
 					}
-				}else{
-					nullo = true;
 				}
 			}
-			if( achou == false ){
+			if(!achou && vectorMp3.get(i).getGenero() != null){
 				g[index] = vectorMp3.get(i).getGenero();
 				index++;
 				System.out.println(vectorMp3.get(i).getGenero());
@@ -529,7 +554,6 @@ public class Gui extends Application {
 				datagenero.add( vectorMp3.get(i) );
 			}
 			achou = false;
-			nullo = false;
 		}
 
 		for(Mp3 m : datagenero){
@@ -558,26 +582,23 @@ public class Gui extends Application {
 
 
 	public void dataArtista(){
-		String[] g = new String[200];
-		boolean achou = false, nullo = false;
+		String[] g = new String[10000];
+		boolean achou = false;
 		int index = 0;
 		for (int i = 0; i < vectorMp3.size(); i++) {
-			for (int j = 0; j < 125 && !achou && !nullo; j++ ) {
+			for (int j = 0; j < index && !achou; j++ ) {
 				if(g[j]!=null){
 					if( g[j].equals(vectorMp3.get(i).getAutor())){
 						achou = true;
 					}
-				}else{
-					nullo = true;
 				}
 			}
-			if( achou == false ){
+			if(!achou && vectorMp3.get(i).getAutor() != null && !vectorMp3.get(i).getAutor().equals("")){
 				g[index] = vectorMp3.get(i).getAutor();
 				index++;
 				dataArtista.add( vectorMp3.get(i) );
 			}
 			achou = false;
-			nullo = false;
 		}
 
 		for(Mp3 m : dataArtista){
@@ -812,7 +833,7 @@ public class Gui extends Application {
 				int x = playlist.getSelectionModel().getSelectedIndex();
 				playlist.getSelectionModel().clearAndSelect(x+1);
 				Mp3 o = (Mp3) playlist.getSelectionModel().getSelectedItem();
-				f = new File(diretorio+o.getNome());
+				f = new File(o.getPath());
 				Media m = new Media(f.toURI().toString());
 				player.play(m);
 				player.pause();
@@ -837,7 +858,7 @@ public class Gui extends Application {
 				int x = playlist.getSelectionModel().getSelectedIndex();
 				playlist.getSelectionModel().clearAndSelect(x-1);
 				Mp3 o = (Mp3) playlist.getSelectionModel().getSelectedItem();
-				f = new File(diretorio+o.getNome());
+				f = new File(o.getPath());
 				Media m = new Media(f.toURI().toString());
 				player.play(m);
 				player.pause();
