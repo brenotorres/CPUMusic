@@ -2,10 +2,11 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
-	<classpathentry exported="true" kind="lib" path="C:/Users/Breno/Desktop/Breno/Musical/hyperic-sigar-1.6.4/sigar-bin/lib/sigar.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="file:/C:/Users/Breno/Desktop/Breno/Musical/hyperic-sigar-1.6.4/docs/javadoc/"/>
-		</attributes>
-	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/Filipe Fernando/Documents/Musical/CPUMusic/CPUMusic/sigar.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/Java/jre7/lib/jfxrt.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Filipe Fernando/Documents/Musical/CPUMusic/CPUMusic/mp3spi1.9.5.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Filipe Fernando/Documents/Musical/CPUMusic/CPUMusic/jl1.0.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Filipe Fernando/Documents/Musical/CPUMusic/CPUMusic/tritonus_share-0.3.6.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Filipe Fernando/Documents/Musical/CPUMusic/CPUMusic/jfxtras-labs-2.2-r4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
