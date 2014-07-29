@@ -1,12 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
-	<classpathentry kind="lib" path="C:/Users/Filipe Fernando/Documents/Musical/CPUMusic/CPUMusic/sigar.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Breno/Desktop/Breno/workspace/CPUMusic/CPUMusic/jfxtras-labs-2.2-r4.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Breno/Desktop/Breno/workspace/CPUMusic/CPUMusic/jl1.0.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Breno/Desktop/Breno/workspace/CPUMusic/CPUMusic/mp3spi1.9.5.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Breno/Desktop/Breno/workspace/CPUMusic/CPUMusic/tritonus_share-0.3.6.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Breno/Downloads/hyperic-sigar-1.6.4/hyperic-sigar-1.6.4/sigar-bin/lib/log4j.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Breno/Downloads/hyperic-sigar-1.6.4/hyperic-sigar-1.6.4/sigar-bin/lib/sigar.jar"/>
 	<classpathentry kind="lib" path="C:/Program Files/Java/jre7/lib/jfxrt.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Filipe Fernando/Documents/Musical/CPUMusic/CPUMusic/mp3spi1.9.5.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Filipe Fernando/Documents/Musical/CPUMusic/CPUMusic/jl1.0.1.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Filipe Fernando/Documents/Musical/CPUMusic/CPUMusic/tritonus_share-0.3.6.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Filipe Fernando/Documents/Musical/CPUMusic/CPUMusic/jfxtras-labs-2.2-r4.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="C:/Users/Breno/Desktop/Breno/Musical/Beads/beads/library/beads.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/C:/Users/Breno/Desktop/Breno/Musical/Beads/beads/doc/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/Breno/Desktop/Breno/Musical/Beads/beads/library/beads-io.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Breno/Desktop/Breno/Musical/Beads/beads/library/jl1.0.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Breno/Desktop/Breno/Musical/Beads/beads/library/mp3spi1.9.4.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Breno/Desktop/Breno/Musical/Beads/beads/library/org-jaudiolibs-audioservers.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Breno/Desktop/Breno/Musical/Beads/beads/library/org-jaudiolibs-audioservers-jack.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Breno/Desktop/Breno/Musical/Beads/beads/library/org-jaudiolibs-audioservers-javasound.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Breno/Desktop/Breno/Musical/Beads/beads/library/org-jaudiolibs-jnajack.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Breno/Desktop/Breno/Musical/Beads/beads/library/tritonus_share.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

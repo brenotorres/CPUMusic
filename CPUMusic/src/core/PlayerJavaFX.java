@@ -97,6 +97,7 @@ public class PlayerJavaFX implements interfacePlayer{
 		}
 		if(status == Status.UNKNOWN || status == Status.PAUSED || status == Status.READY || status == Status.STOPPED){
 			mp.play();
+		
 			mp.setOnReady(new Runnable() {
 				public void run() {
 					System.out.println("setonready");
