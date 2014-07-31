@@ -60,13 +60,13 @@ public class Gui extends Application {
 
 	PlayerBeads player;
 	private int lineSelect;
-//	private int lineSelectp;
+	//	private int lineSelectp;
 	private boolean repeat = false;
 	private Label playTime;
 	private TextField musicTab = new TextField();
-//	private Label playTimep;
-	
-	
+	//	private Label playTimep;
+
+
 	//Slider volumep = new Slider();
 	//Slider reproducaop = new Slider(); // 9
 	final Button botPlay = new Button(); 	
@@ -75,7 +75,14 @@ public class Gui extends Application {
 	final Button botMute = new Button();
 	final Button botAnt = new Button();
 	final Button botPro = new Button();
-	
+
+	final Image iplay = new Image(getClass().getResourceAsStream("play.png"));
+	final Image ipause = new Image(getClass().getResourceAsStream("pause.png"));
+	final Image ifone = new Image(getClass().getResourceAsStream("fone.png"));
+	final Image istop = new Image(getClass().getResourceAsStream("stop.png"));
+	final Image imute = new Image(getClass().getResourceAsStream("mute.png"));
+	final Image iantes = new Image(getClass().getResourceAsStream("anterior.png"));
+	final Image iproximo = new Image(getClass().getResourceAsStream("proximo.png"));
 
 	public double tempo;
 	public  long seek=0;
@@ -140,13 +147,13 @@ public class Gui extends Application {
 
 				player = new PlayerBeads();
 				cena.setRoot(raiz);
-				
+
 				palco.setWidth(800);
 				palco.setHeight(600);
 
 				palco.setX(250);
 				palco.setY(50);
-				
+
 				diretorio = dir.getText();
 
 				//playlist.prefWidthProperty().bind(cena.widthProperty());
@@ -171,7 +178,7 @@ public class Gui extends Application {
 						i++;
 					}
 				}
-				
+
 				TabPane tabPane = new TabPane();
 
 				Tab tab = new Tab();
@@ -184,10 +191,10 @@ public class Gui extends Application {
 				tab3.setContent(Config());
 				tab3.setClosable(false);
 
-//				Tab tab4 = new Tab();
-//				tab4.setText("Playlists");
-//				tab4.setContent(Playlists());
-//				tab4.setClosable(false);
+				//				Tab tab4 = new Tab();
+				//				tab4.setText("Playlists");
+				//				tab4.setContent(Playlists());
+				//				tab4.setClosable(false);
 
 				tabPane.getTabs().addAll(tab, tab3);
 				raiz.getChildren().add(tabPane);
@@ -226,11 +233,11 @@ public class Gui extends Application {
 
 		tempoCol.prefWidthProperty().bind(table.widthProperty().divide(10));
 		tempoCol.setCellValueFactory(new PropertyValueFactory<Mp3, String>("tempo"));
-		
+
 		TableColumn artistaCol = new TableColumn("Artista");
 		artistaCol.prefWidthProperty().bind(table.widthProperty().divide(4));
 		artistaCol.setCellValueFactory(new PropertyValueFactory<Mp3, String>("autor"));
-		
+
 		TableColumn albumCol = new TableColumn("Álbum");
 		albumCol.prefWidthProperty().bind(table.widthProperty().divide(5));
 		albumCol.setCellValueFactory(new PropertyValueFactory<Mp3, String>("album"));
@@ -241,11 +248,12 @@ public class Gui extends Application {
 
 		table.getColumns().addAll(musicCol, tempoCol, artistaCol, albumCol, generoCol);
 		table.setItems(data);
-		
+
 		table.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			public void handle(MouseEvent event) {
 				if (event.getClickCount()>1) {
-					botStop.fire();
+					player.stop();
+					state = STOPPED;
 					botPlay.fire();
 				}
 			}
@@ -289,16 +297,16 @@ public class Gui extends Application {
 			}
 		});
 
-//		menuAll.setOnAction(new EventHandler<MouseEvent>() {
-//			@Override
-//			public void handle(MouseEvent evento){
-//				table.setItems(data);
-//			}
-//		});
+		//		menuAll.setOnAction(new EventHandler<MouseEvent>() {
+		//			@Override
+		//			public void handle(MouseEvent evento){
+		//				table.setItems(data);
+		//			}
+		//		});
 
 		MenuItem todos = new MenuItem("Todas");
 		MenuItem nenhuma = new MenuItem("Nenhuma");
-		
+
 		todos.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent evento){
@@ -313,9 +321,9 @@ public class Gui extends Application {
 				table.setItems(n);
 			}
 		});
-		
+
 		menuAll.getItems().addAll(todos, nenhuma);
-		
+
 		MenuItem mescu = new MenuItem("Menos Tocadas");
 		MenuItem Top = new MenuItem("Top 10");
 
@@ -334,18 +342,18 @@ public class Gui extends Application {
 		});
 
 		menuCustons.getItems().addAll(Top, mescu);
-		
+
 		MenuBar menuBar = new MenuBar();
 		menuBar.getMenus().addAll(menuArtist, menuGen, menuCustons, menuAll);
-		
-		
+
+
 		HBox rep= new HBox();
 		playTime.setText("--:--/--:--");
-		
-		
+
+
 		rep.getChildren().addAll(reproducao, playTime);
 		vbox.getChildren().addAll(menuBar, Menuplayer(), new Separator(), rep, new Separator(), table);
-		
+
 		return vbox;
 	}
 
@@ -358,14 +366,6 @@ public class Gui extends Application {
 		volume.setMin(0);
 		volume.setMax(1);
 		volume.setValue(0.7);
-
-		final Image iplay = new Image(getClass().getResourceAsStream("play.png"));
-		final Image ipause = new Image(getClass().getResourceAsStream("pause.png"));
-		final Image ifone = new Image(getClass().getResourceAsStream("fone.png"));
-		final Image istop = new Image(getClass().getResourceAsStream("stop.png"));
-		final Image imute = new Image(getClass().getResourceAsStream("mute.png"));
-		final Image iantes = new Image(getClass().getResourceAsStream("anterior.png"));
-		final Image iproximo = new Image(getClass().getResourceAsStream("proximo.png"));
 
 		botPlay.setGraphic(new ImageView(iplay));
 		botPlay.setContentDisplay(ContentDisplay.CENTER);
@@ -397,48 +397,44 @@ public class Gui extends Application {
 		botPlay.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent evento) {
-				if(state != PLAYING){
-					state = PLAYING;
-					lineSelect = table.getSelectionModel().getSelectedIndex();
-					Mp3 o = ((Mp3)table.getSelectionModel().getSelectedItem());
-//					f = new File(o.getPath());
-//
-//					Media m = new Media(f.toURI().toString());
-//					player.play(m);
-					player.play(o.getPath());
-					vectorMp3.get(vectorMp3.indexOf(o)).incremeta();
-					reproducao.setValue(0.0);
+				if (player != null){
+					if(state != PLAYING){
+						state = PLAYING;
+						lineSelect = table.getSelectionModel().getSelectedIndex();
+						Mp3 o = ((Mp3)table.getSelectionModel().getSelectedItem());
+						//					f = new File(o.getPath());
+						//
+						//					Media m = new Media(f.toURI().toString());
+						//					player.play(m);
+						player.play(o.getPath());
+						vectorMp3.get(vectorMp3.indexOf(o)).incremeta();
+						reproducao.setValue(0.0);
 
-//					player.mp.currentTimeProperty().addListener(new InvalidationListener() {
-//						public void invalidated(Observable ov) {
-//							updateValues();
-//						}
-//					});
+						//					player.mp.currentTimeProperty().addListener(new InvalidationListener() {
+						//						public void invalidated(Observable ov) {
+						//							updateValues();
+						//						}
+						//					});
 
-					player.clock.addMessageListener(new Bead() {
-						public void messageReceived(Bead message) {
-							updateValues();
+						player.clock.addMessageListener(new Bead() {
+							public void messageReceived(Bead message) {
+								updateValues();
+							}
 						}
+								);
+
+
+						musicTab.setText(o.getTitulo());
+						musicTab.setAlignment(Pos.CENTER);
+						musicTab.setVisible(true);
+						botPlay.setGraphic(new ImageView(ipause));
+					}else{
+						state = PAUSED;
+						player.pause();
+						botPlay.setGraphic(new ImageView(iplay));
 					}
-							);
-					
-					player.player.setEndListener(new Bead() {
-						public void messageReceived(Bead message) {
-							botPro.fire();
-						}
-					}
-							);
-					
-					musicTab.setText(o.getNome());
-					musicTab.setAlignment(Pos.CENTER);
-					musicTab.setVisible(true);
-					botPlay.setGraphic(new ImageView(ipause));
-				}else{
-					state = PAUSED;
-					player.pause();
-					botPlay.setGraphic(new ImageView(iplay));
+
 				}
-
 			}
 		});
 
@@ -478,17 +474,22 @@ public class Gui extends Application {
 		botPro.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent evento){
-				table.getSelectionModel().selectLast();
-				int ultimo = table.getSelectionModel().getSelectedIndex();
-				if (lineSelect < ultimo){
-					table.getSelectionModel().select(lineSelect+1);
-					botStop.fire();
-					botPlay.fire();
-				}else{
-					if (repeat){
-						table.getSelectionModel().select(0);
+				if (player.player != null){
+					System.out.println("cu");
+					table.getSelectionModel().selectLast();
+					int ultimo = table.getSelectionModel().getSelectedIndex();
+					if (lineSelect < ultimo){
+						table.getSelectionModel().select(lineSelect+1);
 						botStop.fire();
 						botPlay.fire();
+					}else{
+						if (repeat){
+							table.getSelectionModel().select(0);
+							botStop.fire();
+							botPlay.fire();
+						}else{
+							botStop.fire();
+						}
 					}
 				}
 			}
@@ -507,7 +508,7 @@ public class Gui extends Application {
 		HBox.setHgrow(musicTab, Priority.ALWAYS);
 		musicTab.setEditable(false);
 		musicTab.setVisible(false);
-		
+
 		hbox.setSpacing(11);
 		hbox.getChildren().addAll(botAnt, botPlay, botPro, botStop, musicTab, botMute, volume);
 		hbox.setAlignment(Pos.CENTER);
@@ -520,12 +521,17 @@ public class Gui extends Application {
 		if (playTime != null && reproducao != null && volume != null) {
 			Platform.runLater(new Runnable() {
 				public void run() {
-					double duration = player.player.getSample().getLength();
-					if(duration!=0){
-						double currentTime = player.get_Tempo();
-						playTime.setText(formatTime(currentTime, duration));
-						if (!reproducao.isDisabled()&& duration > 0 && !reproducao.isValueChanging()) {
-							reproducao.setValue((currentTime/duration)*100);
+					if (state == PLAYING){
+						double duration = player.player.getSample().getLength();
+						if(duration!=0){
+							double currentTime = player.get_Tempo();
+							playTime.setText(formatTime(currentTime, duration));
+							if (!reproducao.isDisabled()&& duration > 0 && !reproducao.isValueChanging()) {
+								reproducao.setValue((currentTime/duration)*100);
+							}
+							if (currentTime >= duration){
+								botPro.fire();
+							}
 						}
 					}
 				}
@@ -573,7 +579,7 @@ public class Gui extends Application {
 
 	private Node Config(){
 		VBox vbox = new VBox();
-		
+
 		Label Diretorio = new Label("Diretorio de musicas");
 
 		final TextField txtDiretorio = new TextField(diretorio);
@@ -795,228 +801,228 @@ public class Gui extends Application {
 	}
 
 
-//	private Node Playlists() {
-//
-//		VBox vBox = new VBox(5);
-//		TableColumn playl = new TableColumn("Playlist");
-//		playl.setPrefWidth(300);
-//		playl.setCellValueFactory(new PropertyValueFactory<Mp3, String>("nome"));
-//		playlist.getColumns().add(playl);
-//
-//		playlist.prefHeightProperty().bind(cena.heightProperty());
-//		playlist.prefWidthProperty().bind(cena.widthProperty());
-//
-//		final Image iplay = new Image(getClass().getResourceAsStream("play.png"));
-//		final Image ipause = new Image(getClass().getResourceAsStream("pause.png"));
-//		final Image ifone = new Image(getClass().getResourceAsStream("fone.png"));
-//		final Image istop = new Image(getClass().getResourceAsStream("stop.png"));
-//		final Image imute = new Image(getClass().getResourceAsStream("mute.png"));
-//		final Image iantes = new Image(getClass().getResourceAsStream("anterior.png"));
-//		final Image iproximo = new Image(getClass().getResourceAsStream("proximo.png"));
-//
-//
-//		final Button botPlay = new Button(); 	
-//		final Button botPause = new Button();
-//		final Button botStop = new Button();
-//		final Button botMute = new Button();
-//		final Button botAnt = new Button();
-//		final Button botPro = new Button();
-//
-//		botPlay.setGraphic(new ImageView(iplay));
-//		botPause.setGraphic(new ImageView(ipause));
-//		botStop.setGraphic(new ImageView(istop));
-//		botMute.setGraphic(new ImageView(ifone));
-//		botAnt.setGraphic(new ImageView(iantes));
-//		botPro.setGraphic(new ImageView(iproximo));
-//
-//
-//		botPlay.setStyle("-fx-base: transparent; ");//deixar transparente
-//		botPlay.setFocusTraversable(false);//tirar borda
-//		botStop.setStyle("-fx-base: transparent;");
-//		botStop.setFocusTraversable(false);
-//		botMute.setStyle("-fx-base: transparent;");
-//		botMute.setFocusTraversable(false);
-//		botPro.setStyle("-fx-base: transparent;");
-//		botPro.setFocusTraversable(false);
-//		botAnt.setStyle("-fx-base: transparent;");
-//		botAnt.setFocusTraversable(false);
-//
-//		botPlay.setOnAction(new EventHandler<ActionEvent>() {
-//			@Override
-//			public void handle(ActionEvent evento) {
-//				if(state != PLAYING){
-//					state = PLAYING;
-//					lineSelectp = playlist.getSelectionModel().getSelectedIndex();
-//					Mp3 o = ((Mp3)playlist.getSelectionModel().getSelectedItem());
-//					f = new File(o.getPath());
-//
-//					Media m = new Media(f.toURI().toString());
-//					player.play(m);
-//					vectorMp3.get(vectorMp3.indexOf(o)).incremeta();
-//					reproducaop.setValue(0.0);
-//
-//					player.mp.currentTimeProperty().addListener(new InvalidationListener() {
-//						public void invalidated(Observable ov) {
-//							updateValuesp();
-//						}
-//					});
-//
-//					player.mp.setOnEndOfMedia(new Runnable() {
-//						public void run() {
-//							botPro.fire();
-//						}
-//					});
-//					botPlay.setGraphic(new ImageView(ipause));
-//				}else{
-//					state = PAUSED;
-//					player.pause();
-//					botPlay.setGraphic(new ImageView(iplay));
-//				}
-//			}
-//		});
-//
-//		botStop.setOnAction(new EventHandler<ActionEvent>() {
-//			@Override
-//			public void handle(ActionEvent evento){
-//				player.stop();
-//				reproducao.setValue(0);
-//				if(state == PLAYING){
-//					botPlay.setGraphic(new ImageView(iplay));
-//					state = STOPPED;
-//				}
-//			}
-//		});
-//
-//		botMute.setOnAction(new EventHandler<ActionEvent>() {
-//			@Override
-//			public void handle (ActionEvent evento){
-//				if(state == PLAYING||state == PAUSED){	
-//					if(mute){
-//						mute = false;
-//						volumep.setValue(player.get_volumeAtual());
-//						player.mute(mute);
-//						botMute.setGraphic( new ImageView(ifone) );
-//					}else{
-//						mute = true;
-//						player.mute(mute);
-//						//volumep.setValue(player.get_minimo());
-//						botMute.setGraphic( new ImageView(imute) );
-//					}
-//				}	
-//			}
-//		});
-//
-//		botPro.setOnAction(new EventHandler<ActionEvent>() {
-//			@Override
-//			public void handle(ActionEvent evento){
-//				playlist.getSelectionModel().selectLast();
-//				int ultimo = playlist.getSelectionModel().getSelectedIndex();
-//				if (lineSelectp < ultimo){
-//					playlist.getSelectionModel().select(lineSelectp+1);
-//					botStop.fire();
-//					botPlay.fire();
-//				}else{
-//					if (repeatp){
-//						playlist.getSelectionModel().select(0);
-//						botStop.fire();
-//						botPlay.fire();
-//					}
-//				}
-//			}
-//		});
-//
-//		botAnt.setOnAction(new EventHandler<ActionEvent>() {
-//			@Override
-//			public void handle(ActionEvent evento){
-//				playlist.getSelectionModel().clearAndSelect(lineSelectp-1);
-//				botStop.fire();
-//				botPlay.fire();
-//			}
-//		});
-//
-//		MenuItem mescu = new MenuItem("Menos Tocadas");
-//		MenuItem Top = new MenuItem("Top 10");
-//
-//		Top.setOnAction(new EventHandler<ActionEvent>() {
-//			@Override
-//			public void handle(ActionEvent evento){
-//				Gerarplaytop10();			
-//			}
-//		});
-//
-//		mescu.setOnAction(new EventHandler<ActionEvent>() {
-//			@Override
-//			public void handle(ActionEvent evento){
-//				Gerarplaymenosouvidas();
-//			}
-//		});
-//
-//		menuCustons.getItems().addAll( Top, mescu );
-//		MenuBar menuBar = new MenuBar();
-//		menuBar.getMenus().addAll(menuArtist, menuGen, menuCustons);
-//
-//		playTimep = new Label();
-//		playTimep.setPrefWidth(150);
-//		playTimep.setText("--:--/--:--");
-//
-//		reproducaop.setMin(0);
-//		reproducaop.setMaxWidth(Double.MAX_VALUE);
-//		reproducaop.prefWidthProperty().bind(cena.widthProperty());
-//		reproducaop.setShowTickLabels(false); // 10
-//		reproducaop.setShowTickMarks(false); // 11
-//		reproducaop.valueProperty().addListener(new InvalidationListener() {
-//			public void invalidated(Observable ov) {
-//				if (reproducaop.isValueChanging()) {
-//					player.seek(Math.floor(reproducaop.getValue()));
-//					updateValues();
-//				}
-//			}
-//		});
-//
-//		volumep.setMaxWidth(100); 
-//		volumep.setShowTickLabels(false); // 10
-//		volumep.setShowTickMarks(false); // 11
-//		volumep.setTranslateY(volume.getTranslateY()+4);
-//		volumep.setMin(0);
-//		volumep.setMax(1);
-//		volumep.setValue(0.7);
-//
-//		volumep.valueProperty().addListener(new ChangeListener<Number>() {
-//			public void changed(ObservableValue<? extends Number> ov, Number old_v, Number new_v){
-//				player.set_volume(new_v.doubleValue());
-//			}
-//		});
-//
-//
-//
-//		HBox hboxl1 = new HBox();
-//		hboxl1.getChildren().addAll(botAnt, botPlay, botPro, botStop, botMute, volumep);
-//		HBox hboxl2 = new HBox();
-//		hboxl2.getChildren().addAll(reproducaop, playTimep);
-//
-//		vBox.getChildren().addAll(menuBar, hboxl1, hboxl2, playlist);
-//
-//		return vBox;
-//
-//	}
-//
-//	private void updateValuesp() {
-//		if (playTimep != null && reproducaop != null && volumep != null) {
-//			Platform.runLater(new Runnable() {
-//				@SuppressWarnings("deprecation")
-//				public void run() {
-//					if(player.mp!=null){
-//						Duration currentTime = player.mp.getCurrentTime();
-//						playTimep.setText(formatTime(currentTime, player.duration));
-//						//reproducao.setMax(player.mp.getTotalDuration().toSeconds());						
-//						if (!reproducaop.isDisabled()&& player.duration.greaterThan(Duration.ZERO) && !reproducaop.isValueChanging()) {
-//							reproducaop.setValue(currentTime.divide(player.duration).toMillis() * 100.0);
-//						}
-//					}
-//				}
-//			});
-//		}
-//	}
-	
-	
+	//	private Node Playlists() {
+	//
+	//		VBox vBox = new VBox(5);
+	//		TableColumn playl = new TableColumn("Playlist");
+	//		playl.setPrefWidth(300);
+	//		playl.setCellValueFactory(new PropertyValueFactory<Mp3, String>("nome"));
+	//		playlist.getColumns().add(playl);
+	//
+	//		playlist.prefHeightProperty().bind(cena.heightProperty());
+	//		playlist.prefWidthProperty().bind(cena.widthProperty());
+	//
+	//		final Image iplay = new Image(getClass().getResourceAsStream("play.png"));
+	//		final Image ipause = new Image(getClass().getResourceAsStream("pause.png"));
+	//		final Image ifone = new Image(getClass().getResourceAsStream("fone.png"));
+	//		final Image istop = new Image(getClass().getResourceAsStream("stop.png"));
+	//		final Image imute = new Image(getClass().getResourceAsStream("mute.png"));
+	//		final Image iantes = new Image(getClass().getResourceAsStream("anterior.png"));
+	//		final Image iproximo = new Image(getClass().getResourceAsStream("proximo.png"));
+	//
+	//
+	//		final Button botPlay = new Button(); 	
+	//		final Button botPause = new Button();
+	//		final Button botStop = new Button();
+	//		final Button botMute = new Button();
+	//		final Button botAnt = new Button();
+	//		final Button botPro = new Button();
+	//
+	//		botPlay.setGraphic(new ImageView(iplay));
+	//		botPause.setGraphic(new ImageView(ipause));
+	//		botStop.setGraphic(new ImageView(istop));
+	//		botMute.setGraphic(new ImageView(ifone));
+	//		botAnt.setGraphic(new ImageView(iantes));
+	//		botPro.setGraphic(new ImageView(iproximo));
+	//
+	//
+	//		botPlay.setStyle("-fx-base: transparent; ");//deixar transparente
+	//		botPlay.setFocusTraversable(false);//tirar borda
+	//		botStop.setStyle("-fx-base: transparent;");
+	//		botStop.setFocusTraversable(false);
+	//		botMute.setStyle("-fx-base: transparent;");
+	//		botMute.setFocusTraversable(false);
+	//		botPro.setStyle("-fx-base: transparent;");
+	//		botPro.setFocusTraversable(false);
+	//		botAnt.setStyle("-fx-base: transparent;");
+	//		botAnt.setFocusTraversable(false);
+	//
+	//		botPlay.setOnAction(new EventHandler<ActionEvent>() {
+	//			@Override
+	//			public void handle(ActionEvent evento) {
+	//				if(state != PLAYING){
+	//					state = PLAYING;
+	//					lineSelectp = playlist.getSelectionModel().getSelectedIndex();
+	//					Mp3 o = ((Mp3)playlist.getSelectionModel().getSelectedItem());
+	//					f = new File(o.getPath());
+	//
+	//					Media m = new Media(f.toURI().toString());
+	//					player.play(m);
+	//					vectorMp3.get(vectorMp3.indexOf(o)).incremeta();
+	//					reproducaop.setValue(0.0);
+	//
+	//					player.mp.currentTimeProperty().addListener(new InvalidationListener() {
+	//						public void invalidated(Observable ov) {
+	//							updateValuesp();
+	//						}
+	//					});
+	//
+	//					player.mp.setOnEndOfMedia(new Runnable() {
+	//						public void run() {
+	//							botPro.fire();
+	//						}
+	//					});
+	//					botPlay.setGraphic(new ImageView(ipause));
+	//				}else{
+	//					state = PAUSED;
+	//					player.pause();
+	//					botPlay.setGraphic(new ImageView(iplay));
+	//				}
+	//			}
+	//		});
+	//
+	//		botStop.setOnAction(new EventHandler<ActionEvent>() {
+	//			@Override
+	//			public void handle(ActionEvent evento){
+	//				player.stop();
+	//				reproducao.setValue(0);
+	//				if(state == PLAYING){
+	//					botPlay.setGraphic(new ImageView(iplay));
+	//					state = STOPPED;
+	//				}
+	//			}
+	//		});
+	//
+	//		botMute.setOnAction(new EventHandler<ActionEvent>() {
+	//			@Override
+	//			public void handle (ActionEvent evento){
+	//				if(state == PLAYING||state == PAUSED){	
+	//					if(mute){
+	//						mute = false;
+	//						volumep.setValue(player.get_volumeAtual());
+	//						player.mute(mute);
+	//						botMute.setGraphic( new ImageView(ifone) );
+	//					}else{
+	//						mute = true;
+	//						player.mute(mute);
+	//						//volumep.setValue(player.get_minimo());
+	//						botMute.setGraphic( new ImageView(imute) );
+	//					}
+	//				}	
+	//			}
+	//		});
+	//
+	//		botPro.setOnAction(new EventHandler<ActionEvent>() {
+	//			@Override
+	//			public void handle(ActionEvent evento){
+	//				playlist.getSelectionModel().selectLast();
+	//				int ultimo = playlist.getSelectionModel().getSelectedIndex();
+	//				if (lineSelectp < ultimo){
+	//					playlist.getSelectionModel().select(lineSelectp+1);
+	//					botStop.fire();
+	//					botPlay.fire();
+	//				}else{
+	//					if (repeatp){
+	//						playlist.getSelectionModel().select(0);
+	//						botStop.fire();
+	//						botPlay.fire();
+	//					}
+	//				}
+	//			}
+	//		});
+	//
+	//		botAnt.setOnAction(new EventHandler<ActionEvent>() {
+	//			@Override
+	//			public void handle(ActionEvent evento){
+	//				playlist.getSelectionModel().clearAndSelect(lineSelectp-1);
+	//				botStop.fire();
+	//				botPlay.fire();
+	//			}
+	//		});
+	//
+	//		MenuItem mescu = new MenuItem("Menos Tocadas");
+	//		MenuItem Top = new MenuItem("Top 10");
+	//
+	//		Top.setOnAction(new EventHandler<ActionEvent>() {
+	//			@Override
+	//			public void handle(ActionEvent evento){
+	//				Gerarplaytop10();			
+	//			}
+	//		});
+	//
+	//		mescu.setOnAction(new EventHandler<ActionEvent>() {
+	//			@Override
+	//			public void handle(ActionEvent evento){
+	//				Gerarplaymenosouvidas();
+	//			}
+	//		});
+	//
+	//		menuCustons.getItems().addAll( Top, mescu );
+	//		MenuBar menuBar = new MenuBar();
+	//		menuBar.getMenus().addAll(menuArtist, menuGen, menuCustons);
+	//
+	//		playTimep = new Label();
+	//		playTimep.setPrefWidth(150);
+	//		playTimep.setText("--:--/--:--");
+	//
+	//		reproducaop.setMin(0);
+	//		reproducaop.setMaxWidth(Double.MAX_VALUE);
+	//		reproducaop.prefWidthProperty().bind(cena.widthProperty());
+	//		reproducaop.setShowTickLabels(false); // 10
+	//		reproducaop.setShowTickMarks(false); // 11
+	//		reproducaop.valueProperty().addListener(new InvalidationListener() {
+	//			public void invalidated(Observable ov) {
+	//				if (reproducaop.isValueChanging()) {
+	//					player.seek(Math.floor(reproducaop.getValue()));
+	//					updateValues();
+	//				}
+	//			}
+	//		});
+	//
+	//		volumep.setMaxWidth(100); 
+	//		volumep.setShowTickLabels(false); // 10
+	//		volumep.setShowTickMarks(false); // 11
+	//		volumep.setTranslateY(volume.getTranslateY()+4);
+	//		volumep.setMin(0);
+	//		volumep.setMax(1);
+	//		volumep.setValue(0.7);
+	//
+	//		volumep.valueProperty().addListener(new ChangeListener<Number>() {
+	//			public void changed(ObservableValue<? extends Number> ov, Number old_v, Number new_v){
+	//				player.set_volume(new_v.doubleValue());
+	//			}
+	//		});
+	//
+	//
+	//
+	//		HBox hboxl1 = new HBox();
+	//		hboxl1.getChildren().addAll(botAnt, botPlay, botPro, botStop, botMute, volumep);
+	//		HBox hboxl2 = new HBox();
+	//		hboxl2.getChildren().addAll(reproducaop, playTimep);
+	//
+	//		vBox.getChildren().addAll(menuBar, hboxl1, hboxl2, playlist);
+	//
+	//		return vBox;
+	//
+	//	}
+	//
+	//	private void updateValuesp() {
+	//		if (playTimep != null && reproducaop != null && volumep != null) {
+	//			Platform.runLater(new Runnable() {
+	//				@SuppressWarnings("deprecation")
+	//				public void run() {
+	//					if(player.mp!=null){
+	//						Duration currentTime = player.mp.getCurrentTime();
+	//						playTimep.setText(formatTime(currentTime, player.duration));
+	//						//reproducao.setMax(player.mp.getTotalDuration().toSeconds());						
+	//						if (!reproducaop.isDisabled()&& player.duration.greaterThan(Duration.ZERO) && !reproducaop.isValueChanging()) {
+	//							reproducaop.setValue(currentTime.divide(player.duration).toMillis() * 100.0);
+	//						}
+	//					}
+	//				}
+	//			});
+	//		}
+	//	}
+
+
 }

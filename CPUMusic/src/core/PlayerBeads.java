@@ -1,11 +1,11 @@
 package core;
 
-import java.io.File;
-
 import net.beadsproject.beads.core.AudioContext;
+import net.beadsproject.beads.core.UGen;
 import net.beadsproject.beads.data.Sample;
 import net.beadsproject.beads.data.SampleManager;
 import net.beadsproject.beads.ugens.Clock;
+import net.beadsproject.beads.ugens.Envelope;
 import net.beadsproject.beads.ugens.Gain;
 import net.beadsproject.beads.ugens.GranularSamplePlayer;
 
@@ -16,44 +16,56 @@ public class PlayerBeads implements interfacePlayer{
 	public GranularSamplePlayer player;
 	public Clock clock;
 
+	String file;
 	float volume = 0;
 
-	//	public PlayerBeads(){
-	//		setup();
-	//	}
+		public PlayerBeads(){
+			ac = new AudioContext();
+			player = new GranularSamplePlayer(ac, new Sample(0));
+		}
 
 	public void setup(String file){
-		ac = new AudioContext();
-		player = new GranularSamplePlayer(ac, SampleManager.sample(file));
-		clock = new Clock(ac, player.getRateUGen());
+		this.file = file;
+		ac.stop();
 		g = new Gain(ac, 2, 0.7f);
-
+//		player.reTrigger();
+		player = new GranularSamplePlayer(ac, SampleManager.sample(this.file));
+		g.addInput(player);
+//		Envelope rateEnvelope = new Envelope(ac, SampleManager.sample(this.file).getSampleRate());
+//		player.setRate(rateEnvelope);
+//		player.reset();
+//		player.setSample(SampleManager.sample(this.file));
+		clock = new Clock(ac, player.getRateUGen());
+		ac.out.addDependent(clock);
+		g.removeAllConnections(player);
 		g.addInput(player);
 		ac.out.addInput(g);
-		ac.out.addDependent(clock);
 	}
 
 	public void play(String file) {
-		if (player != null && player.isPaused()){
-			player.start();
-		}else{
 			System.out.println(file);
-			//player.setSample(SampleManager.sample(file));
 			setup(file);
 			ac.start();
-			player.start();
-		} 
+			//player.start(); 
 	}
 
 	public void pause() {
-		if (!player.isPaused()){
+		if (player != null && !player.isPaused()){
 			player.pause(true);
 		}
 	}
 
 	public void stop() {
-		if (player != null){
-			player.setSample(new Sample(0));
+		if (player != null && file != null){
+			ac.stop();
+			player.removeAllConnections(player.getRateUGen());
+			player.kill();
+			ac.out.removeDependent(clock);
+			clock = null;
+			ac.out.removeAllConnections(g);
+			g = null;
+			SampleManager.removeSample(this.file);
+			file = null;
 		}
 	}
 
