@@ -15,10 +15,10 @@ import net.beadsproject.beads.ugens.SamplePlayer;
 
 public class beads {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws InterruptedException {
 
 		AudioContext ac;
-
+		float valor = 0.1f;
 		ac = new AudioContext();
 		/*
 		 * In lesson 4 we played back samples. This example is almost the same
@@ -30,7 +30,7 @@ public class beads {
 		player.setSample(SampleManager.sample(audioFile));
 		float TamanhoMusica = (float)SampleManager.sample(audioFile).getLength();
 		
-		player.setRandomness (new Glide(ac, 3, TamanhoMusica)); // mudar só esse parametro, de 0 a 5 , onde 5 é bem locão e 0 é normals
+		player.setRandomness (new Glide(ac, 0.1f, TamanhoMusica)); // mudar só esse parametro, de 0 a 5 , onde 5 é bem locão e 0 é normals, valor ideal para ficar variando é entre 0 e 0.9f
 		player.setGrainInterval(new Glide(ac, 10, TamanhoMusica));
 		player.setGrainSize(new Glide(ac, 40, TamanhoMusica));
 		player.setPitch(new Glide(ac, 1, TamanhoMusica));
@@ -68,7 +68,8 @@ public class beads {
 		Gain g = new Gain(ac, 2, 0.2f);
 		g.addInput(player);
 		ac.out.addInput(g);
-
+		
+		
 		Clock clock = new net.beadsproject.beads.ugens.Clock(ac, player.getRateUGen());
 		/*
 		 * Tell the clock to tick (you probably don't want
@@ -93,6 +94,14 @@ public class beads {
 
 		ac.start();
 		ac.start();
+		while(true){
+			//simulando a thread
+			Thread.sleep(1000);
+			
+			player.setRandomness (new Glide(ac, valor, TamanhoMusica));
+			valor = valor + 0.1f;
+			System.out.println("É, talvez seja possivel fazer em thread.");
+		}
 	}
 
 }
