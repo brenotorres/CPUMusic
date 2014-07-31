@@ -25,15 +25,16 @@ public class beads {
 		 * but uses GranularSamplePlayer instead of SamplePlayer. See some of
 		 * the controls below.
 		 */
-		String audioFile = "teste.mp3";
+		String audioFile = "audio/tenso.mp3";
 		GranularSamplePlayer player = new GranularSamplePlayer(ac, new Sample(0));
 		player.setSample(SampleManager.sample(audioFile));
+		float TamanhoMusica = (float)SampleManager.sample(audioFile).getLength();
 		
-		player.setRandomness (new Glide(ac, 5, 10));
-		player.setGrainInterval(new Glide(ac, 3, 5));
-		player.setGrainSize(new Glide(ac, 150, 50));
-//		player.setPosition(new Glide(ac, 50000, 30));
-		player.setPitch(new Glide(ac, 1, 20));
+		player.setRandomness (new Glide(ac, 3, TamanhoMusica)); // mudar só esse parametro, de 0 a 5 , onde 5 é bem locão e 0 é normals
+		player.setGrainInterval(new Glide(ac, 10, TamanhoMusica));
+		player.setGrainSize(new Glide(ac, 40, TamanhoMusica));
+		player.setPitch(new Glide(ac, 1, TamanhoMusica));
+		player.setInterpolationType(SamplePlayer.InterpolationType.ADAPTIVE); // sei nem o que é direito, botei aqui pq vi na api, mas ficou interessante.
 		
 //		player.setRandomness (new Glide(ac, 5, 100));
 //		player.setGrainInterval(new Glide(ac, 3, 5));
