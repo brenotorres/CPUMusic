@@ -71,17 +71,26 @@ public class Sensors {
 		}
 	}
 	
-	public void getInformationsAboutDISK() {
+	public void getInformationsAboutDISK() throws SigarException, InterruptedException {
+        Sigar sigar = new Sigar();
 
-		// pegar infomação sobre disco é um pouco mais dificil do que eu imaginava.
-		
-		/*try {
-			
-			//System.out.println(sigar.getDiskUsage());
-			
-		} catch (SigarException e) {
-			e.printStackTrace();
-		}*/
+        long prevTime = 0;
+        long prevBytes = 0;
+        final long interval = 1 * 1000;
+
+        while (true) {
+            long time = System.currentTimeMillis();
+            long bytes = sigar.getDiskUsage("C:").getReadBytes();
+            if (prevTime != 0) {
+                long rate = (bytes - prevBytes) / ((time - prevTime));
+                System.out.println("irr" + (bytes - prevBytes) );
+                //System.out.println("irr" + bytes );
+                System.out.println("disk read bytes per second=" + Sigar.formatSize(rate));
+            }
+            prevTime = time;
+            prevBytes = bytes;
+            Thread.sleep(1000);
+        }
 	}
 
 
