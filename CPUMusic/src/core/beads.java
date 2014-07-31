@@ -2,11 +2,13 @@ package core;
 
 import net.beadsproject.beads.core.AudioContext;
 import net.beadsproject.beads.core.Bead;
+import net.beadsproject.beads.core.UGen;
 import net.beadsproject.beads.data.Sample;
 import net.beadsproject.beads.data.SampleManager;
 import net.beadsproject.beads.ugens.Clock;
 import net.beadsproject.beads.ugens.Envelope;
 import net.beadsproject.beads.ugens.Gain;
+import net.beadsproject.beads.ugens.Glide;
 import net.beadsproject.beads.ugens.GranularSamplePlayer;
 import net.beadsproject.beads.ugens.Noise;
 import net.beadsproject.beads.ugens.SamplePlayer;
@@ -23,9 +25,21 @@ public class beads {
 		 * but uses GranularSamplePlayer instead of SamplePlayer. See some of
 		 * the controls below.
 		 */
-		String audioFile = "audio/teste.mp3";
+		String audioFile = "teste.mp3";
 		GranularSamplePlayer player = new GranularSamplePlayer(ac, new Sample(0));
 		player.setSample(SampleManager.sample(audioFile));
+		
+		player.setRandomness (new Glide(ac, 5, 10));
+		player.setGrainInterval(new Glide(ac, 3, 5));
+		player.setGrainSize(new Glide(ac, 150, 50));
+//		player.setPosition(new Glide(ac, 50000, 30));
+		player.setPitch(new Glide(ac, 1, 20));
+		
+//		player.setRandomness (new Glide(ac, 5, 100));
+//		player.setGrainInterval(new Glide(ac, 3, 5));
+//		player.setGrainSize(new Glide(ac, 200, 100));
+//		player.setPosition(new Glide(ac, 50000, 30));
+//		player.setPitch(new Glide(ac, 1, 200));		
 		/*
 		 * Have some fun with the controls.
 		 */
