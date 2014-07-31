@@ -16,15 +16,14 @@ import net.beadsproject.beads.ugens.SamplePlayer;
 public class beads {
 
 	public static void main(String[] args) throws InterruptedException {
-
+		
+		// Sintese Granular motherfuckermente louca.
+		
 		AudioContext ac;
 		float valor = 0.1f;
+		float valorPitch = 1;
 		ac = new AudioContext();
-		/*
-		 * In lesson 4 we played back samples. This example is almost the same
-		 * but uses GranularSamplePlayer instead of SamplePlayer. See some of
-		 * the controls below.
-		 */
+
 		String audioFile = "audio/tenso.mp3";
 		GranularSamplePlayer player = new GranularSamplePlayer(ac, new Sample(0));
 		player.setSample(SampleManager.sample(audioFile));
@@ -35,62 +34,14 @@ public class beads {
 		player.setGrainSize(new Glide(ac, 40, TamanhoMusica));
 		player.setPitch(new Glide(ac, 1, TamanhoMusica));
 		player.setInterpolationType(SamplePlayer.InterpolationType.ADAPTIVE); // sei nem o que é direito, botei aqui pq vi na api, mas ficou interessante.
-		
-//		player.setRandomness (new Glide(ac, 5, 100));
-//		player.setGrainInterval(new Glide(ac, 3, 5));
-//		player.setGrainSize(new Glide(ac, 200, 100));
-//		player.setPosition(new Glide(ac, 50000, 30));
-//		player.setPitch(new Glide(ac, 1, 200));		
-		/*
-		 * Have some fun with the controls.
-		 */
-		// loop the sample at its end points
-//		player.setLoopType(SamplePlayer.LoopType.LOOP_FORWARDS);
-//		player.getLoopStartUGen().setValue(0);
-//		player.getLoopEndUGen().setValue(
-//				(float)SampleManager.sample(audioFile).getLength());
-//		// control the rate of grain firing
-//		Envelope grainIntervalEnvelope = new Envelope(ac, 100);
-//		grainIntervalEnvelope.addSegment(20, 10000);
-//		player.setGrainInterval(grainIntervalEnvelope);
-//		// control the playback rate
-//		Envelope rateEnvelope = new Envelope(ac, 1);
-//		rateEnvelope.addSegment(1, 5000);
-//		rateEnvelope.addSegment(0, 5000);
-//		rateEnvelope.addSegment(0, 2000);
-//		rateEnvelope.addSegment(-0.1f, 2000);
-//		player.setRate(rateEnvelope);
-//		// a bit of noise can be nice
-//		player.getRandomnessUGen().setValue(0.01f);
-		/*
-		 * And as before...
-		 */
+
 		Gain g = new Gain(ac, 2, 0.2f);
 		g.addInput(player);
 		ac.out.addInput(g);
 		
 		
 		Clock clock = new net.beadsproject.beads.ugens.Clock(ac, player.getRateUGen());
-		/*
-		 * Tell the clock to tick (you probably don't want
-		 * to do this except for debugging.
-		 */
 
-//		clock.addMessageListener(new Bead() {
-//			public void messageReceived(Bead message) {
-//				System.out.println("cu");
-//			}
-//		}
-//				);
-//		ac.out.addDependent(clock);
-
-
-		/*
-		 * Now this is new, because the clock doesn't have
-		 * any outputs, we can't add it to the AudioContext
-		 * and that means it won't run. So we use the method
-		 * addDependent() instead.
-		 */
 
 		ac.start();
 		ac.start();
@@ -99,7 +50,9 @@ public class beads {
 			Thread.sleep(1000);
 			
 			player.setRandomness (new Glide(ac, valor, TamanhoMusica));
-			valor = valor + 0.1f;
+			player.setPitch(new Glide(ac, valorPitch, TamanhoMusica));
+			valorPitch = valorPitch + 0.005f;
+			valor = valor + 0.05f;
 			System.out.println("É, talvez seja possivel fazer em thread.");
 		}
 	}
