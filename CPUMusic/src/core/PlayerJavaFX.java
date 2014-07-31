@@ -59,7 +59,7 @@ public class PlayerJavaFX implements interfacePlayer{
 	}
 
 	@Override
-	public void set_volume(double d) {
+	public void set_volume(float d) {
 		mp.setVolume(d);
 		volumeatual = d;
 	}
@@ -83,12 +83,14 @@ public class PlayerJavaFX implements interfacePlayer{
 	}
 
 	@Override
-	public long get_Tempo() {
-		return (long) Math.floor(mp.getMedia().getDuration().toSeconds());
+	public double get_Tempo() {
+		return Math.floor(mp.getMedia().getDuration().toSeconds());
 	}
 
 	@Override
-	public void play(Media m) {
+	public void play(String path) {
+		File f = new File(path);
+		Media m = new Media(f.toURI().toString());
 		if(mp == null){
 			mp = new MediaPlayer(m);
 			status = mp.getStatus();

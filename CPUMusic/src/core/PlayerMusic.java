@@ -302,7 +302,7 @@ public class PlayerMusic implements interfacePlayer, Runnable{
 		}
 	}
 
-	public void set_volume(float fa){
+	public void set_volume(float fa, String a){
 		if(controleVolume&&(fa<=get_maximo())&&(fa>=get_minimo())){
 			gainControl.setValue(fa);
 			//System.out.println("#comeu a bronca"+gainControl.getValue());
@@ -355,7 +355,7 @@ public class PlayerMusic implements interfacePlayer, Runnable{
 	}
 
 	@Override
-	public void play(Media file) {
+	public void play(String file) {
 		// TODO Auto-generated method stub
 
 	}
@@ -367,13 +367,13 @@ public class PlayerMusic implements interfacePlayer, Runnable{
 	}
 
 	@Override
-	public void set_volume(double f) {
+	public void set_volume(float f) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public long get_Tempo() {
+	public double get_Tempo() {
 		// TODO Auto-generated method stub
 		return 0;
 	}

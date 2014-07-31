@@ -249,7 +249,12 @@ public class RepositorioMusica {
 				int mili = (int) (microseconds / 1000);
 				int sec = (mili / 1000) % 60;
 				int min = (mili / 1000) / 60;
-				time = min + ":" + sec;
+				if(sec > 9){
+					time = min + ":" + sec;
+				}else{
+					time = min + ":0" + sec;
+				}
+				
 				temp.setTempo(time);
 
 				lista.addElement(temp);
