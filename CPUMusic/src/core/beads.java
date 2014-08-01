@@ -24,7 +24,7 @@ public class beads {
 		float valorPitch = 1;
 		ac = new AudioContext();
 
-		String audioFile = "audio/tenso.mp3";
+		String audioFile = "audio/teste.mp3";
 		GranularSamplePlayer player = new GranularSamplePlayer(ac, new Sample(0));
 		player.setSample(SampleManager.sample(audioFile));
 		float TamanhoMusica = (float)SampleManager.sample(audioFile).getLength();
@@ -35,7 +35,7 @@ public class beads {
 		player.setPitch(new Glide(ac, 1, TamanhoMusica));
 		player.setInterpolationType(SamplePlayer.InterpolationType.ADAPTIVE); // sei nem o que é direito, botei aqui pq vi na api, mas ficou interessante.
 
-		Gain g = new Gain(ac, 2, 0.2f);
+		Gain g = new Gain(ac, 2, 0.4f);
 		g.addInput(player);
 		ac.out.addInput(g);
 		
