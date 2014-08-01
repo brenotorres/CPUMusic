@@ -5,6 +5,7 @@ import net.beadsproject.beads.core.Bead;
 import net.beadsproject.beads.core.UGen;
 import net.beadsproject.beads.data.Sample;
 import net.beadsproject.beads.data.SampleManager;
+import net.beadsproject.beads.ugens.BiquadFilter;
 import net.beadsproject.beads.ugens.Clock;
 import net.beadsproject.beads.ugens.Envelope;
 import net.beadsproject.beads.ugens.Gain;
@@ -12,38 +13,77 @@ import net.beadsproject.beads.ugens.Glide;
 import net.beadsproject.beads.ugens.GranularSamplePlayer;
 import net.beadsproject.beads.ugens.Noise;
 import net.beadsproject.beads.ugens.OnePoleFilter;
+import net.beadsproject.beads.ugens.Reverb;
 import net.beadsproject.beads.ugens.SamplePlayer;
 
 public class CrazyThingNumber1 {
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws InterruptedException {
+		int FILTER = 2;
+		double POSITION = 0;
+		int ENVELOPE = 1;
 
 		AudioContext ac;
 
 		ac = new AudioContext();
-		/*
-		 * In lesson 4 we played back samples. This example is almost the same
-		 * but uses GranularSamplePlayer instead of SamplePlayer. See some of
-		 * the controls below.
-		 */
+		
 		String audioFile = "D:/Music/iTunes/iTunes Media/Music/Disclosure _ Settle (Deluxe Edition)/Settle (Deluxe Version)/03 Latch (Album Version).mp3";
 		GranularSamplePlayer player = new GranularSamplePlayer(ac, new Sample(0));
 		player.setSample(SampleManager.sample(audioFile));
-		OnePoleFilter filter1 = new OnePoleFilter(ac, 200);
+		//OnePoleFilter filter1 = new OnePoleFilter(ac, 100);
+		//filter1.addInput(player);
+		BiquadFilter filter1 = new BiquadFilter(ac, 500, BiquadFilter.BESSEL_LP);
 		filter1.addInput(player);
+		BiquadFilter filter2 = new BiquadFilter(ac, 500, BiquadFilter.BESSEL_HP);
+		filter2.addInput(player);
+		player.setToEnd();
+		//Glide rateValue = new Glide(ac, 1, -1);
+		Envelope rateEnvelope1 = new Envelope(ac, -1);
+		Envelope rateEnvelope2 = new Envelope(ac, 1);
 		
-		
-		
+		player.setRate(rateEnvelope1);
 		
 		Gain g = new Gain(ac, 2, 0.2f);
+		//g.addInput(filter1);
+		
+		//Reverb r = new Reverb(ac, 1);
+		//r.setSize(0.7f);
+		//r.setDamping(0.5f);
+		//r.addInput(g);
 		//g.addInput(player);
 		
-		g.addInput(filter1);
 		
-		ac.out.addInput(g);
+		//ac.out.addInput(r);
+		
+		
 
 		ac.start();
 		ac.start();
+		while(true){
+			//simulando a thread
+			Thread.sleep(10000);
+			player.setPosition(POSITION);
+			POSITION = POSITION + 50000;
+			if(ENVELOPE == 1){
+				player.setRate(rateEnvelope2);
+				ENVELOPE = 2;
+			}else{
+				player.setRate(rateEnvelope1);
+				ENVELOPE = 1;
+			}	
+			
+			if(FILTER == 1){
+				g.removeAllConnections(filter1);	
+				g.addInput(filter2);
+				FILTER = 2;
+			}else{
+				g.removeAllConnections(filter2);
+				g.addInput(filter1);
+				FILTER = 1;
+			}
+			ac.out.addInput(g);
+		}
+		
 	}
 
 }
