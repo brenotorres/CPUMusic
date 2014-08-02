@@ -27,7 +27,7 @@ public class CrazyThingNumber1 {
 
 		ac = new AudioContext();
 		
-		String audioFile = "D:/Music/iTunes/iTunes Media/Music/Disclosure _ Settle (Deluxe Edition)/Settle (Deluxe Version)/03 Latch (Album Version).mp3";
+		String audioFile = "audio/teste.mp3";
 		GranularSamplePlayer player = new GranularSamplePlayer(ac, new Sample(0));
 		player.setSample(SampleManager.sample(audioFile));
 		//OnePoleFilter filter1 = new OnePoleFilter(ac, 100);
@@ -45,12 +45,13 @@ public class CrazyThingNumber1 {
 		
 		Gain g = new Gain(ac, 2, 0.2f);
 		//g.addInput(filter1);
+		g.addInput(player);
 		
-		//Reverb r = new Reverb(ac, 1);
-		//r.setSize(0.7f);
-		//r.setDamping(0.5f);
-		//r.addInput(g);
-		//g.addInput(player);
+		
+		Reverb r = new Reverb(ac, 2);
+		r.setSize(0.9f);
+		r.setDamping(0.7f);
+		r.addInput(g);
 		
 		
 		//ac.out.addInput(r);
