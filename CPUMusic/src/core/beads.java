@@ -1,5 +1,6 @@
 package core;
 
+import dados.Sensors;
 import net.beadsproject.beads.core.AudioContext;
 import net.beadsproject.beads.core.Bead;
 import net.beadsproject.beads.core.UGen;
@@ -41,18 +42,18 @@ public class beads {
 		
 		
 		Clock clock = new net.beadsproject.beads.ugens.Clock(ac, player.getRateUGen());
-
-
+		Sensors sensor = new Sensors();
+		
 		ac.start();
 		ac.start();
 		while(true){
 			//simulando a thread
 			Thread.sleep(1000);
-			
-			player.setRandomness (new Glide(ac, valor, TamanhoMusica));
-			player.setPitch(new Glide(ac, valorPitch, TamanhoMusica));
-			valorPitch = valorPitch + 0.005f;
-			valor = valor + 0.05f;
+			//System.out.println( "vije " +(float) (sensor.getInformationsAboutCPU()+1));
+			player.setRandomness (new Glide(ac, (float)(sensor.getInformationsAboutMemory()/50), TamanhoMusica));
+			player.setPitch(new Glide(ac, (float)((sensor.getInformationsAboutCPU()*0.01)+1), TamanhoMusica));
+			//valorPitch = valorPitch + 0.005f;
+			//valor = valor + 0.05f;
 			System.out.println("É, talvez seja possivel fazer em thread.");
 		}
 	}

@@ -47,7 +47,7 @@ public class core {
 			public void run(){
 				while(true){
 					try {
-						//Thread.sleep(1000);
+						Thread.sleep(1000);
 						//ta dando diferente do do windows, conferi se meu calculo da porcentagem é coerente
 						sensor.getInformationsAboutDISK();
 					} catch (InterruptedException e) {

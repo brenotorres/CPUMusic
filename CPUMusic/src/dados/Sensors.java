@@ -18,7 +18,8 @@ public class Sensors {
 
 	private static Sigar sigar = new Sigar();
 
-	public void getInformationsAboutMemory() {
+	public double getInformationsAboutMemory() {
+		Sigar sigarmem = new Sigar();
 		/*System.out.println("**************************************");
 	        System.out.println("*** Informations about the Memory: ***");
 	        System.out.println("**************************************\n");
@@ -26,7 +27,7 @@ public class Sensors {
 
 		Mem mem = null;
 		try {
-			mem = sigar.getMem();
+			mem = sigarmem.getMem();
 		} catch (SigarException se) {
 			se.printStackTrace();
 		}
@@ -45,15 +46,17 @@ public class Sensors {
 	                / 1024 / 1024+ " MB");
 		 */
 
-		System.out.println(mem.getUsedPercent());
+		//System.out.println(mem.getUsedPercent());
+		return mem.getUsedPercent();
 
 
 
 
 	}
 
-	public void getInformationsAboutCPU() {
-
+	public Double getInformationsAboutCPU() {
+		Sigar sigarcpu = new Sigar();
+		double retorno = 0;
 		/*System.out.println("**************************************");
 	        System.out.println("*** Informations about the CPU: ***");
 	        System.out.println("**************************************\n");
@@ -64,26 +67,27 @@ public class Sensors {
 			//como, usuario, sistema e tal, o que eu fiz foi pegar a que está em idle
 			//e subtrair de 100% pra pegar todo o resto, conferir se isso ta certo depois.
 			
-			System.out.println((1 - sigar.getCpuPerc().getIdle())*100);
-			
+			//System.out.println((1 - sigarcpu.getCpuPerc().getIdle())*100);
+			retorno = ((1 - sigarcpu.getCpuPerc().getIdle())*100);
 		} catch (SigarException e) {
 			e.printStackTrace();
 		}
+		return retorno;
 	}
 	
-	public void getInformationsAboutDISK() throws SigarException, InterruptedException {
+	public String getInformationsAboutDISK() throws SigarException, InterruptedException {
         Sigar sigar = new Sigar();
 
         long prevTime = 0;
         long prevBytes = 0;
-        final long interval = 1 * 1000;
+        //final long interval = 1 * 1000;
 
         while (true) {
             long time = System.currentTimeMillis();
             long bytes = sigar.getDiskUsage("C:").getReadBytes();
             if (prevTime != 0) {
                 long rate = (bytes - prevBytes) / ((time - prevTime));
-                System.out.println("irr" + (bytes - prevBytes) );
+                //System.out.println("irr" + (bytes - prevBytes) );
                 //System.out.println("irr" + bytes );
                 System.out.println("disk read bytes per second=" + Sigar.formatSize(rate));
             }
