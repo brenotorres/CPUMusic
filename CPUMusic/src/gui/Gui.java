@@ -25,6 +25,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -33,12 +34,15 @@ import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.Separator;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Toggle;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
@@ -186,6 +190,11 @@ public class Gui extends Application {
 				tab.setContent(Player1());
 				tab.setClosable(false);
 
+				Tab tab2 = new Tab();
+				tab2.setText("Efeitos");
+				tab2.setContent(Efeitos());
+				tab2.setClosable(false);
+
 				Tab tab3 = new Tab();
 				tab3.setText("Configurações");
 				tab3.setContent(Config());
@@ -196,7 +205,7 @@ public class Gui extends Application {
 				//				tab4.setContent(Playlists());
 				//				tab4.setClosable(false);
 
-				tabPane.getTabs().addAll(tab, tab3);
+				tabPane.getTabs().addAll(tab, tab2, tab3);
 				raiz.getChildren().add(tabPane);
 			}
 		});
@@ -515,8 +524,6 @@ public class Gui extends Application {
 		return hbox;
 	}
 
-
-
 	public void updateValues() {
 		if (playTime != null && reproducao != null && volume != null) {
 			Platform.runLater(new Runnable() {
@@ -538,7 +545,6 @@ public class Gui extends Application {
 			});
 		}
 	}
-
 
 	private static String formatTime(double elapsed, double duration) {
 		int intElapsed = (int) Math.floor(elapsed/1000);
@@ -577,16 +583,90 @@ public class Gui extends Application {
 		}
 	}
 
+	private Node Efeitos(){
+		HBox hbox = new HBox();
+
+		hbox.setAlignment(Pos.TOP_LEFT);
+		hbox.setPadding(new Insets(15,0,15,0));
+		hbox.setSpacing(10);
+
+		VBox vbox = new VBox();
+		vbox.setPadding(new Insets(15,15,15,15));
+
+		final ImageView icon = new ImageView();
+
+
+		final ToggleGroup group = new ToggleGroup();
+
+		RadioButton rb0 = new RadioButton("Sem efeito");
+		rb0.setToggleGroup(group);
+		rb0.setSelected(true);
+		
+		RadioButton rb1 = new RadioButton("Reverb");
+		rb1.setToggleGroup(group);
+
+		RadioButton rb2 = new RadioButton("Filtro");
+		rb2.setToggleGroup(group);
+
+		RadioButton rb3 = new RadioButton("Sintese Granular");
+		rb3.setToggleGroup(group);
+
+		RadioButton rb4 = new RadioButton("Compressão");
+		rb4.setToggleGroup(group);
+
+		RadioButton rb5 = new RadioButton("Flanger");
+		rb5.setToggleGroup(group);
+
+
+		icon.setImage(new Image(
+				getClass().getResourceAsStream("caja.png"
+//                    group.getSelectedToggle().getUserData().toString() + 
+//                        ".jpg"
+						)
+				));
+
+		group.selectedToggleProperty().addListener(new ChangeListener<Toggle>(){
+			public void changed(ObservableValue<? extends Toggle> ov,
+					Toggle old_toggle, Toggle new_toggle) {
+				if (group.getSelectedToggle() != null) {
+					final Image image = new Image(
+							getClass().getResourceAsStream("caja.png"
+//                                group.getSelectedToggle().getUserData().toString() + 
+//                                    ".jpg"
+									)
+							);
+					icon.setImage(image);
+					RadioButton chk = (RadioButton)group.getSelectedToggle();
+					player.fx = chk.getText();
+				}                
+			}
+		});
+
+
+		vbox.getChildren().addAll(rb0, rb1, rb2, rb3, rb4, rb5);
+
+		hbox.getChildren().addAll(vbox, icon);
+
+		return hbox;
+	}
+
 	private Node Config(){
 		VBox vbox = new VBox();
 
-		Label Diretorio = new Label("Diretorio de musicas");
+		HBox caixaDir = new HBox();
+		caixaDir.setAlignment(Pos.TOP_LEFT);
+		caixaDir.setPadding(new Insets(15,0,15,0));
+		caixaDir.setSpacing(10);
 
+		Label Diretorio = new Label("Diretorio de musicas");
 		final TextField txtDiretorio = new TextField(diretorio);
 		txtDiretorio.setTooltip(new Tooltip("Diretorio de onde as músicas serão tocadas"));
 		final Label configurado = new Label("\nConfigurado com sucesso!");
 		configurado.setTextFill(Color.web("#0076a3"));
 		configurado.setVisible(false);
+
+		caixaDir.getChildren().addAll(Diretorio, txtDiretorio);
+
 
 		Button config = new Button("Configurar");
 		config.setVisible(true);
@@ -615,7 +695,7 @@ public class Gui extends Application {
 			}
 		});
 
-		vbox.getChildren().addAll(Diretorio, txtDiretorio, config, configurado);
+		vbox.getChildren().addAll(caixaDir, config, configurado);
 
 		return vbox;
 	}
