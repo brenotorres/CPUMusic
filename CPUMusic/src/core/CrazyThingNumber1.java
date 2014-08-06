@@ -20,9 +20,6 @@ import net.beadsproject.beads.ugens.SamplePlayer;
 public class CrazyThingNumber1 {
 	
 	public static void main(String[] args) throws InterruptedException {
-		int FILTER = 2;
-		double POSITION = 0;
-		int ENVELOPE = 1;
 
 		AudioContext ac;
 
