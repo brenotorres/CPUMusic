@@ -17,6 +17,7 @@ public class PlayerBeads implements interfacePlayer{
 
 	private static final String NOFX = "Sem efeito";
 	private static final String GRANULAR = "Sintese Granular";
+	private static final String TIME = "Time Shifter";
 
 	Sensors sensor;
 	float TamanhoMusica;
@@ -74,16 +75,45 @@ public class PlayerBeads implements interfacePlayer{
 				public void run() {
 					while(true){
 						try {
-							Thread.sleep(1000);
+							Thread.sleep(100);
 						} catch (InterruptedException e) {
 							e.printStackTrace();
 						}
 						//System.out.println( "vije " +(float) (sensor.getInformationsAboutCPU()+1));
-						player.setRandomness (new Glide(ac, (float)(sensor.getInformationsAboutMemory()/50), TamanhoMusica));
+						player.setRandomness (new Glide(ac, (float)(sensor.getInformationsAboutMemory()/100), TamanhoMusica));
 						player.setPitch(new Glide(ac, (float)((sensor.getInformationsAboutCPU()*0.01)+1), TamanhoMusica));
 						//valorPitch = valorPitch + 0.005f;
 						//valor = valor + 0.05f;
-						System.out.println("É, é possivel fazer em thread.");
+						//System.out.println("É, é possivel fazer em thread.");
+					}
+				}
+			});
+			thread.start();
+			break;
+		case TIME:
+			if (thread != null){
+				thread.stop();
+			}
+			thread = new Thread(new Runnable() {
+				@Override
+				public void run() {
+					while(true){
+						try {
+							Thread.sleep(100);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+						double cpu = sensor.getInformationsAboutCPU();
+						float speed;
+						if(cpu >8 && cpu <20){
+							speed = (float) cpu/10;
+						}else if (cpu >= 20){
+							speed = 2;
+						}else{
+							speed = 0.8f;
+						}
+						Envelope rateEnvelope = new Envelope(ac, speed);
+						player.setRate(rateEnvelope);
 					}
 				}
 			});

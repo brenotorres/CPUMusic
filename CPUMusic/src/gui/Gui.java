@@ -601,7 +601,7 @@ public class Gui extends Application {
 		RadioButton rb0 = new RadioButton("Sem efeito");
 		rb0.setToggleGroup(group);
 		rb0.setSelected(true);
-		
+
 		RadioButton rb1 = new RadioButton("Reverb");
 		rb1.setToggleGroup(group);
 
@@ -611,7 +611,7 @@ public class Gui extends Application {
 		RadioButton rb3 = new RadioButton("Sintese Granular");
 		rb3.setToggleGroup(group);
 
-		RadioButton rb4 = new RadioButton("Compressão");
+		RadioButton rb4 = new RadioButton("Time Shifter");
 		rb4.setToggleGroup(group);
 
 		RadioButton rb5 = new RadioButton("Flanger");
@@ -620,8 +620,8 @@ public class Gui extends Application {
 
 		icon.setImage(new Image(
 				getClass().getResourceAsStream("caja.png"
-//                    group.getSelectedToggle().getUserData().toString() + 
-//                        ".jpg"
+						//                    group.getSelectedToggle().getUserData().toString() + 
+						//                        ".jpg"
 						)
 				));
 
@@ -631,13 +631,14 @@ public class Gui extends Application {
 				if (group.getSelectedToggle() != null) {
 					final Image image = new Image(
 							getClass().getResourceAsStream("caja.png"
-//                                group.getSelectedToggle().getUserData().toString() + 
-//                                    ".jpg"
+									//                                group.getSelectedToggle().getUserData().toString() + 
+									//                                    ".jpg"
 									)
 							);
 					icon.setImage(image);
 					RadioButton chk = (RadioButton)group.getSelectedToggle();
 					player.fx = chk.getText();
+					//System.out.println(player.fx = chk.getText());
 				}                
 			}
 		});
@@ -669,10 +670,11 @@ public class Gui extends Application {
 
 
 		Button config = new Button("Configurar");
-		config.setVisible(true);
 		config.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent evento){
+				configurado.setVisible(false);
+				
 				System.out.println(txtDiretorio.getText());
 
 				diretorio = txtDiretorio.getText();
@@ -684,9 +686,10 @@ public class Gui extends Application {
 				dataArtista();
 
 				if(!vectorMp3.isEmpty()){
+					data.clear();
 					int i = 0;
 					while(i<vectorMp3.size()){
-						data.add(vectorMp3.get(i));
+						data.add(vectorMp3.get(i));							
 						i++;
 					}
 				}
