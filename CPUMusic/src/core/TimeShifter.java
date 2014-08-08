@@ -33,8 +33,10 @@ public class TimeShifter {
 			Thread.sleep(2000);
 			double cpu = sensor.getInformationsAboutCPU();
 			float speed;
-			if(cpu >40){
-				speed = (float) cpu/50;
+			if(cpu >8 && cpu <20){
+				speed = (float) cpu/10;
+			}else if (cpu >= 20){
+				speed = 2;
 			}else{
 				speed = 0.8f;
 			}
