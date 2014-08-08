@@ -54,7 +54,7 @@ public class Sensors {
 
 	}
 
-	public Double getInformationsAboutCPU() {
+	public double getInformationsAboutCPU() {
 		Sigar sigarcpu = new Sigar();
 		double retorno = 0;
 		/*System.out.println("**************************************");

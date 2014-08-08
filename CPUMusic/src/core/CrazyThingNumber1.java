@@ -30,7 +30,7 @@ public class CrazyThingNumber1 {
 		player.setSample(SampleManager.sample(audioFile));
 		//OnePoleFilter filter1 = new OnePoleFilter(ac, 100);
 		//filter1.addInput(player);
-		BiquadFilter filter1 = new BiquadFilter(ac, BiquadFilter.BP_SKIRT, 400, 0.5f);
+		BiquadFilter filter1 = new BiquadFilter(ac, BiquadFilter.BP_SKIRT, 100, 0.5f);
 		filter1.addInput(player);
 		
 		//BiquadFilter filter2 = new BiquadFilter(ac, 500, BiquadFilter.BESSEL_HP);
@@ -63,7 +63,14 @@ public class CrazyThingNumber1 {
 			//simulando a thread
 			Thread.sleep(2000);
 			g.removeAllConnections(filter1);
-			filter1 = new BiquadFilter(ac, BiquadFilter.BP_SKIRT, (float) (sensor.getInformationsAboutMemory()*10) , 3f);
+			double memo = sensor.getInformationsAboutMemory();
+			float freq;
+			if((memo - 50) > 0){
+				freq = (float) (100 + (memo-50)*15);
+			}else{
+				freq = (float) 100;
+			}
+			filter1 = new BiquadFilter(ac, BiquadFilter.BP_SKIRT, freq, 0.5f);
 			filter1.addInput(player);
 			g.addInput(filter1);
 			

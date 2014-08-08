@@ -31,7 +31,14 @@ public class TimeShifter {
 		
 		while(true){
 			Thread.sleep(2000);
-			Envelope rateEnvelope = new Envelope(ac, (float)((sensor.getInformationsAboutCPU()/50)));
+			double cpu = sensor.getInformationsAboutCPU();
+			float speed;
+			if(cpu >40){
+				speed = (float) cpu/50;
+			}else{
+				speed = 0.8f;
+			}
+			Envelope rateEnvelope = new Envelope(ac, speed);
 			player.setRate(rateEnvelope);
 			ac.out.addInput(g);
 		}
