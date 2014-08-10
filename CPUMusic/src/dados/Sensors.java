@@ -77,24 +77,26 @@ public class Sensors {
 	
 	public String getInformationsAboutDISK() throws SigarException, InterruptedException {
         Sigar sigar = new Sigar();
-
+        
         long prevTime = 0;
         long prevBytes = 0;
         //final long interval = 1 * 1000;
 
-        while (true) {
+//        while (true) {
             long time = System.currentTimeMillis();
             long bytes = sigar.getDiskUsage("C:").getReadBytes();
+            long rate = 0;
             if (prevTime != 0) {
-                long rate = (bytes - prevBytes) / ((time - prevTime));
+                rate = (bytes - prevBytes) / ((time - prevTime));
                 //System.out.println("irr" + (bytes - prevBytes) );
                 //System.out.println("irr" + bytes );
                 System.out.println("disk read bytes per second=" + Sigar.formatSize(rate));
             }
-            prevTime = time;
-            prevBytes = bytes;
-            Thread.sleep(1000);
-        }
+//            prevTime = time;
+//            prevBytes = bytes;
+//            Thread.sleep(1000);
+//        }
+            return Sigar.formatSize(rate);
 	}
 
 

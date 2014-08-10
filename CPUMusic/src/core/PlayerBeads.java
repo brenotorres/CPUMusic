@@ -6,23 +6,33 @@ import net.beadsproject.beads.core.AudioContext;
 import net.beadsproject.beads.core.UGen;
 import net.beadsproject.beads.data.Sample;
 import net.beadsproject.beads.data.SampleManager;
+import net.beadsproject.beads.ugens.BiquadFilter;
 import net.beadsproject.beads.ugens.Clock;
 import net.beadsproject.beads.ugens.Envelope;
 import net.beadsproject.beads.ugens.Gain;
 import net.beadsproject.beads.ugens.Glide;
 import net.beadsproject.beads.ugens.GranularSamplePlayer;
+import net.beadsproject.beads.ugens.Reverb;
 import net.beadsproject.beads.ugens.SamplePlayer;
+import net.beadsproject.beads.ugens.TapIn;
+import net.beadsproject.beads.ugens.TapOut;
 
 public class PlayerBeads implements interfacePlayer{
 
 	private static final String NOFX = "Sem efeito";
-	private static final String GRANULAR = "Sintese Granular";
-	private static final String TIME = "Time Shifter";
+	private static final String GRANULAR = "Pitch shift";
+	private static final String TIME = "Time stretch";
+	private static final String FILTRO = "Filtro";
+	private static final String REVERB = "Reverb";
+	private static final String FLANGER = "Flanging";
 
-	Sensors sensor;
+	public Sensors sensor;
 	float TamanhoMusica;
 	Thread thread;
 	public String fx;
+	BiquadFilter filter1;
+	TapIn delayIn;
+	Gain delayGain;
 
 	AudioContext ac;
 	Gain g;
@@ -37,6 +47,9 @@ public class PlayerBeads implements interfacePlayer{
 		sensor = new Sensors();
 		ac = new AudioContext();
 		player = new GranularSamplePlayer(ac, new Sample(0));
+		filter1 = null;
+		delayIn = null;
+		delayGain = null;
 	}
 
 	public void setup(String file){
@@ -59,11 +72,39 @@ public class PlayerBeads implements interfacePlayer{
 		case NOFX:
 			if (thread != null){
 				thread.stop();
+				if (filter1 != null){
+					ac.out.removeAllConnections(g);
+					g.removeAllConnections(filter1);
+					g = new Gain(ac, 2, 0.7f);
+					g.addInput(player);
+					ac.out.addInput(g);
+					filter1 = null;
+				}
+				if (delayIn != null && delayGain != null){
+					delayIn.removeAllConnections(g);
+					ac.out.removeAllConnections(delayGain);
+					delayGain = null;
+					delayIn = null;
+				}
 			}
 			break;
 		case GRANULAR:
 			if (thread != null){
 				thread.stop();
+				if (filter1 != null){
+					ac.out.removeAllConnections(g);
+					g.removeAllConnections(filter1);
+					g = new Gain(ac, 2, 0.7f);
+					g.addInput(player);
+					ac.out.addInput(g);
+					filter1 = null;
+				}
+				if (delayIn != null && delayGain != null){
+					delayIn.removeAllConnections(g);
+					ac.out.removeAllConnections(delayGain);
+					delayGain = null;
+					delayIn = null;
+				}
 			}
 			player.setRandomness (new Glide(ac, 0.1f, TamanhoMusica)); // mudar só esse parametro, de 0 a 5 , onde 5 é bem locão e 0 é normals, valor ideal para ficar variando é entre 0 e 0.9f
 			player.setGrainInterval(new Glide(ac, 10, TamanhoMusica));
@@ -75,7 +116,7 @@ public class PlayerBeads implements interfacePlayer{
 				public void run() {
 					while(true){
 						try {
-							Thread.sleep(100);
+							Thread.sleep(1000);
 						} catch (InterruptedException e) {
 							e.printStackTrace();
 						}
@@ -84,7 +125,7 @@ public class PlayerBeads implements interfacePlayer{
 						player.setPitch(new Glide(ac, (float)((sensor.getInformationsAboutCPU()*0.01)+1), TamanhoMusica));
 						//valorPitch = valorPitch + 0.005f;
 						//valor = valor + 0.05f;
-						//System.out.println("É, é possivel fazer em thread.");
+						System.out.println("Pitch");
 					}
 				}
 			});
@@ -93,13 +134,27 @@ public class PlayerBeads implements interfacePlayer{
 		case TIME:
 			if (thread != null){
 				thread.stop();
+				if (filter1 != null){
+					ac.out.removeAllConnections(g);
+					g.removeAllConnections(filter1);
+					g = new Gain(ac, 2, 0.7f);
+					g.addInput(player);
+					ac.out.addInput(g);
+					filter1 = null;
+				}
+				if (delayIn != null && delayGain != null){
+					delayIn.removeAllConnections(g);
+					ac.out.removeAllConnections(delayGain);
+					delayGain = null;
+					delayIn = null;
+				}
 			}
 			thread = new Thread(new Runnable() {
 				@Override
 				public void run() {
 					while(true){
 						try {
-							Thread.sleep(100);
+							Thread.sleep(1000);
 						} catch (InterruptedException e) {
 							e.printStackTrace();
 						}
@@ -114,6 +169,148 @@ public class PlayerBeads implements interfacePlayer{
 						}
 						Envelope rateEnvelope = new Envelope(ac, speed);
 						player.setRate(rateEnvelope);
+						System.out.println("time");
+					}
+				}
+			});
+			thread.start();
+			break;
+		case FILTRO:
+			if (thread != null){
+				thread.stop();
+				if (filter1 != null){
+					ac.out.removeAllConnections(g);
+					g.removeAllConnections(filter1);
+					g = new Gain(ac, 2, 0.7f);
+					g.addInput(player);
+					ac.out.addInput(g);
+					filter1 = null;
+				}
+				if (delayIn != null && delayGain != null){
+					delayIn.removeAllConnections(g);
+					ac.out.removeAllConnections(delayGain);
+					delayGain = null;
+					delayIn = null;
+				}
+			}
+			thread = new Thread(new Runnable() {
+				@Override
+				public void run() {
+					filter1 = new BiquadFilter(ac, BiquadFilter.BP_SKIRT, 100, 2.5f);
+					filter1.addInput(player);
+					g.addInput(filter1);
+					while(true){
+						try {
+							Thread.sleep(1000);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+						ac.out.removeAllConnections(g);
+						g.removeAllConnections(filter1);
+						g = new Gain(ac, 2, 0.7f);
+						//g.addInput(filter1);
+						//g.addInput(player);
+						double memo = sensor.getInformationsAboutMemory();
+						float freq;
+						if((memo - 50) > 0){
+							freq = (float) (100 + (memo-50)*15);
+						}else{
+							freq = (float) 100;
+						}
+						filter1 = new BiquadFilter(ac, BiquadFilter.BP_SKIRT, freq, 2.5f);
+						filter1.addInput(player);
+						g.addInput(filter1);
+						ac.out.addInput(g);
+
+						System.out.println("filtro");
+					}
+				}
+			});
+			thread.start();
+			break;
+		case REVERB:
+			if (thread != null){
+				thread.stop();
+				if (filter1 != null){
+					ac.out.removeAllConnections(g);
+					g.removeAllConnections(filter1);
+					g = new Gain(ac, 2, 0.7f);
+					g.addInput(player);
+					ac.out.addInput(g);
+					filter1 = null;
+				}
+				if (delayIn != null && delayGain != null){
+					delayIn.removeAllConnections(g);
+					ac.out.removeAllConnections(delayGain);
+					delayGain = null;
+					delayIn = null;
+				}
+			}
+			thread = new Thread(new Runnable() {
+				@Override
+				public void run() {
+					Reverb r = new Reverb(ac, 2);
+					r.setSize(0.9f);
+					r.setDamping(0.5f);
+					r.addInput(g);
+					while(true){
+						try {
+							Thread.sleep(1000);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+						double memo = sensor.getInformationsAboutMemory();
+						float freq;
+						if(memo > 0){
+							freq = (float) memo/100;
+						}else{
+							freq = (float) 0;
+						}
+						r.setSize(freq);
+
+						System.out.println("reverb");
+					}
+				}
+			});
+			thread.start();
+			break;
+		case FLANGER:
+			if (thread != null){
+				thread.stop();
+				if (filter1 != null){
+					ac.out.removeAllConnections(g);
+					g.removeAllConnections(filter1);
+					g = new Gain(ac, 2, 0.7f);
+					g.addInput(player);
+					ac.out.addInput(g);
+					filter1 = null;
+				}
+				if (delayIn != null && delayGain != null){
+					delayIn.removeAllConnections(g);
+					ac.out.removeAllConnections(delayGain);
+					delayGain = null;
+					delayIn = null;
+				}
+			}
+			thread = new Thread(new Runnable() {
+				@Override
+				public void run() {
+					delayIn = new TapIn(ac, 2000);
+					delayIn.addInput(g);
+					TapOut delayOut = new TapOut(ac, delayIn, 50);
+					delayGain = new Gain(ac, 1, 0.7f);
+					delayGain.addInput(delayOut);
+					delayIn.addInput(delayGain);
+					ac.out.addInput(delayGain);
+					while(true){
+						try {
+							Thread.sleep(1000);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+						double cpu = sensor.getInformationsAboutMemory();
+						delayOut.setDelay((float)cpu%20);
+						System.out.println("flanger");
 					}
 				}
 			});
@@ -122,6 +319,14 @@ public class PlayerBeads implements interfacePlayer{
 		default:
 			if (thread != null){
 				thread.stop();
+				if (filter1 != null){
+					ac.out.removeAllConnections(g);
+					g.removeAllConnections(filter1);
+					g = new Gain(ac, 2, 0.7f);
+					g.addInput(player);
+					ac.out.addInput(g);
+					filter1 = null;
+				}
 			}
 			break;
 		}

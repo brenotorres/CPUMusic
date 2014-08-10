@@ -16,7 +16,7 @@ public class TimeShifter {
 
 		ac = new AudioContext();
 		
-		String audioFile = "audio/teste2.mp3";
+		String audioFile = "audio/teste.mp3";
 		GranularSamplePlayer player = new GranularSamplePlayer(ac, new Sample(0));
 		player.setSample(SampleManager.sample(audioFile));
 		

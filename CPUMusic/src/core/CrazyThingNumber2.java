@@ -29,13 +29,12 @@ public class CrazyThingNumber2 {
 		// To do so, use r.setEarlyReflectionsLevel(0-1); or 
 		// r.setLateReverbLevel(0-1);
 		r.addInput(g);
-
-
+		
+		
 		//ac.out.addInput(r);
 
 		ac.out.addInput(g);
 
-		ac.start();
 		ac.start();
 
 	}

@@ -44,7 +44,7 @@ public class CrazyThingNumber1 {
 		
 		Gain g = new Gain(ac, 2, 0.2f);
 		g.addInput(filter1);
-		g.addInput(player);
+		//g.addInput(player);
 		
 		
 		//Reverb r = new Reverb(ac, 2);
@@ -58,11 +58,15 @@ public class CrazyThingNumber1 {
 		
 
 		ac.start();
-		ac.start();
+		//ac.start();
 		while(true){
 			//simulando a thread
 			Thread.sleep(2000);
+			ac.out.removeAllConnections(g);
 			g.removeAllConnections(filter1);
+			g = new Gain(ac, 2, 0.2f);
+			//g.addInput(filter1);
+			//g.addInput(player);
 			double memo = sensor.getInformationsAboutMemory();
 			float freq;
 			if((memo - 50) > 0){
@@ -70,7 +74,7 @@ public class CrazyThingNumber1 {
 			}else{
 				freq = (float) 100;
 			}
-			filter1 = new BiquadFilter(ac, BiquadFilter.BP_SKIRT, freq, 2.5f);
+			filter1 = new BiquadFilter(ac, BiquadFilter.BP_SKIRT, 2000, 2.5f);
 			filter1.addInput(player);
 			g.addInput(filter1);
 			
@@ -95,7 +99,6 @@ public class CrazyThingNumber1 {
 //				g.addInput(filter1);
 //				FILTER = 1;
 //			}
-		
 		
 			ac.out.addInput(g);
 		}
